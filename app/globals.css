@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #F4F3EF;
+  --color-ink: #1C1C1A;
+  --color-muted: #6B6B65;
+  --color-border: #E2E1DC;
+  --color-surface: #FFFFFF;
+  --color-signal: #F5C800;
+  
+  --color-joy: #FF6B35;
+  --color-calm: #4A90D9;
+  --color-wonder: #7B5EA7;
+  --color-nature: #3D9970;
+  --color-warmth: #F7A34B;
+  --color-bold: #E63946;
+
+  --font-display: 'DM Serif Display', serif;
+  --font-body: 'Outfit', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --font-creator: 'Nunito', sans-serif;
+
+  --radius-creator: 20px;
+  --radius-market: 4px;
+}
+
+:root {
+  --color-ink-muted: #6B6B65;
+}
+
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+/* Base nothing grid */
+.bg-dot-grid {
+  background-image: radial-gradient(circle, #1C1C1A 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.04;
+}
+
+/* Crosshair corner markers — Nothing's signature + marks */
+.corner-mark::before {
+  content: '+';
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-ink-muted);
+  opacity: 0.3;
+}
+
+/* The Pixel Breath loading animation */
+@keyframes pixel-pulse {
+  0%, 100% { opacity: 0.08; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.4); }
+}
+
+.pixel-dot {
+  animation: pixel-pulse 1.8s ease-in-out infinite;
+}
