@@ -9,7 +9,7 @@ export default async function FacilitatorSetupPage() {
 
     // Protect this route - must be logged in as a facilitator
     if (error || !session) {
-        redirect('/facilitator/login')
+        return redirect('/facilitator/login');
     }
 
     return (

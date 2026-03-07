@@ -16,7 +16,7 @@
 > What is being worked on RIGHT NOW or should be started NEXT.
 
 ```
-[ ] 5.1 Mock marketplace preview screen (static product mockup images)
+[ ] 6.1 End-to-end test on physical Android device (Chrome)
 ```
 
 *When you begin a task, move it here. When done, move it to Completed below.*
@@ -71,12 +71,12 @@ Work through these in sequence. Do not skip ahead.
 - [x] **4.6** Session record written to DB on completion
 
 ### Phase 5 — Mock Marketplace & Polish
-- [ ] **5.1** Mock marketplace preview screen (static product mockup images)
-- [ ] **5.2** Music / video "Coming soon" placeholder screens
-- [ ] **5.3** Bahasa Indonesia — full string audit across all screens
-- [ ] **5.4** Mobile responsiveness audit (390px, Android Chrome + iOS Safari)
-- [ ] **5.5** Tap target audit (all interactive elements ≥ 72x72px)
-- [ ] **5.6** Loading animation — confirm no blank screens at any point
+- [x] **5.1** Mock marketplace preview screen (static product mockup images)
+- [x] **5.2** Music / video "Coming soon" placeholder screens
+- [x] **5.3** Bahasa Indonesia — full string audit across all screens
+- [x] **5.4** Mobile responsiveness audit (390px, Android Chrome + iOS Safari)
+- [x] **5.5** Tap target audit (all interactive elements ≥ 72x72px)
+- [x] **5.6** Loading animation — confirm no blank screens at any point
 
 ### Phase 6 — Pre-Pilot Checklist
 - [ ] **6.1** End-to-end test on physical Android device (Chrome)

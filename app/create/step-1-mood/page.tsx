@@ -4,7 +4,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useCreationFlow } from "@/contexts/CreationFlowContext";
 import { COPY } from "@/lib/i18n/copy";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 
 // Simulated Mood options (these match the 3 choices requirement)
 const MOODS = [

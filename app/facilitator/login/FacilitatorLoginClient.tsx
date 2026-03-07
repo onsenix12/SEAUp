@@ -63,7 +63,7 @@ export default function FacilitatorLoginClient() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="you@organisation.org"
-                        className="w-full bg-surface border-2 border-border rounded-creator px-6 py-4 font-creator text-xl placeholder:text-ink/30 focus:outline-none focus:border-brand"
+                        className="w-full bg-surface border-2 border-border rounded-creator px-6 py-4 font-creator text-xl placeholder:text-ink/30 focus:outline-none focus:border-ink"
                         required
                     />
                 </div>
@@ -71,16 +71,16 @@ export default function FacilitatorLoginClient() {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full min-h-[72px] bg-brand text-canvas font-creator font-bold text-xl rounded-creator shadow-sm active:scale-[0.98] transition-transform disabled:opacity-50"
+                    className="w-full min-h-[72px] bg-ink text-surface font-creator font-bold text-xl rounded-creator shadow-sm active:scale-[0.98] transition-transform disabled:opacity-50"
                 >
                     {loading ? 'Sending link...' : 'Send Magic Link'}
                 </button>
             </form>
 
-            {message && (
-                <div className={`mt-6 p-4 rounded-creator border-2 font-creator font-bold text-center ${message.startsWith('Error') ? 'bg-signal/20 border-signal text-signal' : 'bg-brand/20 border-brand text-brand'
+            {(message || (typeof window !== 'undefined' && window.location.search.includes('error'))) && (
+                <div className={`mt-6 p-4 rounded-creator border-2 font-creator font-bold text-center ${message.startsWith('Error') || (typeof window !== 'undefined' && window.location.search.includes('error')) ? 'bg-signal/20 border-signal text-signal' : 'bg-ink/10 border-ink text-ink'
                     }`}>
-                    {message}
+                    {message || "Authentication link invalid or expired. Please try again."}
                 </div>
             )}
         </div>

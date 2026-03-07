@@ -84,18 +84,32 @@ export default function ArtworkDetailClient({ artwork }: ArtworkDetailProps) {
             {/* Actions */}
             <div className="flex flex-col gap-4 w-full mt-auto">
                 <button
-                    onClick={handleShare}
-                    className="w-full min-h-[72px] bg-brand text-canvas font-creator font-bold text-xl rounded-creator shadow-sm active:scale-[0.98] transition-transform"
+                    onClick={() => router.push(`/marketplace/${artwork.id}`)}
+                    className="w-full min-h-[72px] bg-brand text-canvas font-creator font-bold text-xl rounded-creator shadow-sm active:scale-[0.98] transition-transform flex items-center justify-center gap-3"
                 >
-                    {t.share}
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                    {language === 'en' ? 'View in Shop' : 'Lihat di Toko'}
                 </button>
 
-                <button
-                    onClick={() => router.push('/create/step-1-mood')}
-                    className="w-full min-h-[64px] bg-surface text-ink font-creator font-bold text-lg rounded-creator border-2 border-border active:scale-[0.96] transition-transform"
-                >
-                    {t.create}
-                </button>
+                <div className="grid grid-cols-2 gap-4">
+                    <button
+                        onClick={handleShare}
+                        className="w-full min-h-[64px] bg-surface text-ink font-creator font-bold text-lg rounded-creator border-2 border-border active:scale-[0.96] transition-transform"
+                    >
+                        {t.share}
+                    </button>
+
+                    <button
+                        onClick={() => router.push('/create/step-1-mood')}
+                        className="w-full min-h-[64px] bg-surface text-ink font-creator font-bold text-lg rounded-creator border-2 border-border active:scale-[0.96] transition-transform"
+                    >
+                        {t.create}
+                    </button>
+                </div>
             </div>
 
         </div>
