@@ -3,6 +3,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Artwork } from "@/types";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface ArtworkDetailProps {
     artwork: Artwork & { creators: { name?: string, organisation: string } };
@@ -11,6 +12,48 @@ interface ArtworkDetailProps {
 export default function ArtworkDetailClient({ artwork }: ArtworkDetailProps) {
     const { language } = useLanguage();
     const router = useRouter();
+    const [isSaving, setIsSaving] = useState(false);
+    const [savingAction, setSavingAction] = useState<string | null>(null);
+
+    const isSentToOrganizer = artwork.marketplace_status === 'pending_review' || artwork.marketplace_status === 'approved' || artwork.marketplace_status === 'rejected';
+
+    const handleAction = async (decision: 'printed' | 'pending_review') => {
+        setIsSaving(true);
+        setSavingAction(decision);
+        try {
+            const response = await fetch('/api/update-status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: artwork.id,
+                    marketplaceStatus: decision
+                })
+            });
+            const data = await response.json();
+
+            if (!data.success) {
+                console.error("Update failed:", data.error);
+                alert(language === 'en' ? `Failed to update: ${data.error}` : `Gagal memperbarui: ${data.error}`);
+                setIsSaving(false);
+                setSavingAction(null);
+                return;
+            }
+
+            sessionStorage.setItem("generated_artwork_url", artwork.image_url);
+            sessionStorage.setItem("existing_artwork_id", artwork.id);
+
+            if (decision === 'printed') {
+                router.push("/create/step-9-print");
+            } else {
+                router.push("/create/step-9-shop-success");
+            }
+        } catch (error) {
+            console.error("Error saving decision:", error);
+            alert(language === 'en' ? "An error occurred while saving." : "Terjadi kesalahan saat menyimpan.");
+            setIsSaving(false);
+            setSavingAction(null);
+        }
+    };
 
     const t = {
         back: language === 'en' ? 'Back' : 'Kembali',
@@ -83,19 +126,31 @@ export default function ArtworkDetailClient({ artwork }: ArtworkDetailProps) {
 
             {/* Actions */}
             <div className="flex flex-col gap-4 w-full mt-auto">
-                <button
-                    onClick={() => router.push(`/marketplace/${artwork.id}`)}
-                    className="w-full min-h-[72px] bg-ink text-surface font-creator font-bold text-xl rounded-creator shadow-sm active:scale-[0.98] transition-transform flex items-center justify-center gap-3"
-                >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <path d="M16 10a4 4 0 0 1-8 0"></path>
-                    </svg>
-                    {language === 'en' ? 'View in Shop' : 'Lihat di Toko'}
-                </button>
+                <div className="flex flex-col gap-3">
+                    <button
+                        onClick={() => handleAction('printed')}
+                        disabled={isSaving}
+                        className="w-full min-h-[64px] bg-canvas text-ink font-creator font-bold text-xl rounded-creator border-2 border-ink shadow-sm active:scale-[0.98] transition-transform flex items-center justify-center gap-3 disabled:opacity-50 hover:bg-surface"
+                    >
+                        {savingAction === 'printed' ? (language === 'en' ? 'Preparing...' : 'Siap-siap...') : (language === 'en' ? 'Print Artwork' : 'Cetak Karya')}
+                    </button>
+                    <button
+                        onClick={() => handleAction('pending_review')}
+                        disabled={isSentToOrganizer || isSaving}
+                        className="w-full min-h-[64px] bg-ink text-surface font-creator font-bold text-xl rounded-creator shadow-sm active:scale-[0.98] transition-transform flex items-center justify-center gap-3 disabled:opacity-50 disabled:bg-muted"
+                    >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <path d="M16 10a4 4 0 0 1-8 0"></path>
+                        </svg>
+                        {isSentToOrganizer
+                            ? (language === 'en' ? 'Sent to Shop' : 'Dikirim ke Toko')
+                            : (savingAction === 'pending_review' ? (language === 'en' ? 'Sending...' : 'Mengirim...') : (language === 'en' ? 'Sell in Shop' : 'Jual di Toko'))}
+                    </button>
+                </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 mt-2">
                     <button
                         onClick={handleShare}
                         className="w-full min-h-[64px] bg-surface text-ink font-creator font-bold text-lg rounded-creator border-2 border-border active:scale-[0.96] transition-transform"

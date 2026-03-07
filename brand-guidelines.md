@@ -33,12 +33,13 @@ This platform has two distinct audiences. Their interfaces share a DNA but serve
 
 ### Mode B — Creator App (ID Individuals, Facilitated Sessions)
 **Tone:** Warm. Tactile. Joyful without being childish.
-**Principle:** Colour IS the interface. Each choice a creator makes fills the screen with that choice's energy. The app should feel like picking up a paint brush — responsive, immediate, alive.
-- Background shifts to match the creator's colour selection.
-- Large, rounded tap targets. Nothing requires reading.
+**Principle:** Colour IS the interface, but anchored on a unified gallery frame. The screen remains grounded on the universal Canvas off-white and dot texture. Selected colours fill the large interactive cards and essential UI elements, bringing the screen to life while keeping the background consistent. The app should feel like picking up a paint brush — responsive, immediate, alive.
+- Background uses the same universal Canvas and dot-grid as the Marketplace. High-energy colours are expressed through foreground interactives (cards, buttons, swatches).
+- Large, rounded tap targets. Nothing requires reading. Minimum tap target is rigorously 72px.
 - The pixel dot texture becomes animated — it breathes during generation.
-- Typography is round and friendly, never sterile.
+- Typography rests entirely on `Outfit` — bolded for friendly, accessible headings without needing a completely different font family.
 - Every completed artwork feels like a poster, not a screenshot.
+- Primary CTA buttons use the same Signal Yellow as the marketplace to build global continuity.
 
 ---
 
@@ -131,14 +132,14 @@ import { DM_Mono } from 'next/font/google'
 - Sizes: `text-xs` (12px) to `text-sm` (14px) only — never large
 
 ### Creator App Typography Override (Mode B)
-- Headings: `Nunito` (700 bold) — rounder, warmer, more accessible
-- Body: `Outfit` 400 — same, maintains consistency
-- No monospace in creator flow — it reads as cold for ID users
+- Headings: `Outfit` (700 bold) — Highly legible for ID users, but shares the same visual family as the rest of the brand. (We dropped Nunito to unify the design).
+- Body: `Outfit` 400 — same, maintains consistency.
+- No monospace in creator flow — it reads as cold for ID users.
 
 ```javascript
 // Use className conditionally:
 // Marketplace: font-display (DM Serif Display)
-// Creator app: font-creator (Nunito)
+// Creator app: font-creator (Outfit, mapped explicitly)
 ```
 
 ---
@@ -244,6 +245,34 @@ The dot-matrix grid animates during AI generation. Individual dots pulse in a wa
 
 ## 8. Component Patterns
 
+### Glass Surface — Marketplace only, over artwork backgrounds
+```css
+.glass-card {
+  background: rgba(244, 243, 239, 0.72);   /* canvas at 72% */
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 
+    0 4px 24px rgba(28, 28, 26, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+}
+
+/* Glass Dark — for overlays on colourful artwork */
+.glass-card-dark {
+  background: rgba(28, 28, 26, 0.55);
+  backdrop-filter: blur(20px) saturate(1.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+```
+
+**When to use glass:**
+- Creator story card overlaid on hero artwork ✅
+- "Buy this piece" CTA floating over artwork detail ✅
+- Navigation bar on scroll (subtle) ✅
+- Base page background ❌
+- Creator app tap targets ❌
+- Any surface not over an image ❌
+
 ### Primary Button (Signal Yellow CTA)
 ```tsx
 <button className="
@@ -309,12 +338,11 @@ The dot-matrix grid animates during AI generation. Individual dots pulse in a wa
 | Drop shadows on artwork | Full-bleed, borderless images |
 | Rounded pill buttons in marketplace | Sharp-cornered or minimal-rounded (4px max) |
 | All-caps body text | All-caps ONLY in mono labels, max 12px |
-| Serif font in creator app | Nunito for creator, DM Serif for marketplace |
 | Text prompts or inputs in creator flow | Visual cards, icons, colour swatches only |
 | Skeleton loaders | Pixel-breath dot animation |
 | Generic spinner (circle) | Nothing-style glyph/dot matrix animation |
 | Emojis in UI | Custom SVG icons or Lucide |
-| Coloured backgrounds in marketplace | `#F4F3EF` canvas only — art provides all colour |
+| Coloured backgrounds replacing the screen | `#F4F3EF` canvas only — art and tap targets provide colour |
 
 ---
 
@@ -344,10 +372,10 @@ module.exports = {
         display: ['DM Serif Display', 'serif'],
         body:    ['Outfit', 'sans-serif'],
         mono:    ['DM Mono', 'monospace'],
-        creator: ['Nunito', 'sans-serif'],
+        creator: ['Outfit', 'sans-serif'],
       },
       borderRadius: {
-        'creator': '20px', // Creator app cards — warm, accessible
+        'creator': '20px', // Creator app cards — accessible, strict minimum 72px targets
         'market':  '4px',  // Marketplace — editorial, precise
       },
     },

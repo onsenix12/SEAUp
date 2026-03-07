@@ -44,6 +44,7 @@ export interface Artwork {
     moderation_pass: boolean;
     session_notes?: string;
     is_public: boolean;
+    marketplace_status?: 'private' | 'pending_review' | 'approved' | 'rejected';
     ip_owner: string; // strictly 'creator'
     created_at: string;
 }

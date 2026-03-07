@@ -7,7 +7,7 @@
   --color-border: #E2E1DC;
   --color-surface: #FFFFFF;
   --color-signal: #F5C800;
-  
+
   --color-joy: #FF6B35;
   --color-calm: #4A90D9;
   --color-wonder: #7B5EA7;
@@ -18,7 +18,7 @@
   --font-display: 'DM Serif Display', serif;
   --font-body: 'Outfit', sans-serif;
   --font-mono: 'DM Mono', monospace;
-  --font-creator: 'Nunito', sans-serif;
+  --font-creator: 'Outfit', sans-serif;
 
   --radius-creator: 20px;
   --radius-market: 4px;
@@ -52,10 +52,37 @@ body {
 
 /* The Pixel Breath loading animation */
 @keyframes pixel-pulse {
-  0%, 100% { opacity: 0.08; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.4); }
+
+  0%,
+  100% {
+    opacity: 0.08;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.4);
+  }
 }
 
 .pixel-dot {
   animation: pixel-pulse 1.8s ease-in-out infinite;
+}
+
+/* Glass Surface — Marketplace only, over artwork backgrounds */
+.glass-card {
+  background: rgba(244, 243, 239, 0.72);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow:
+    0 4px 24px rgba(28, 28, 26, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Glass Dark — for overlays on colourful artwork */
+.glass-card-dark {
+  background: rgba(28, 28, 26, 0.55);
+  backdrop-filter: blur(20px) saturate(1.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }

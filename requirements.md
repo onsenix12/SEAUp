@@ -102,10 +102,13 @@ The entire UI must be designed for cognitive accessibility first. This is not a 
 - "We're making your artwork..." / "Kami sedang membuat karya kamu..."
 - Target: artwork appears within 15 seconds
 
-**Artwork Result Screen**
+**Artwork Result / Decision Screen**
 - Full-screen artwork display
-- Creator name + date overlaid
-- Three buttons: Save to Gallery / Try Again / Share
+- "What do you want to do with your art?"
+- Two primary choices:
+  - "Print for Myself" -> Saves to gallery (`marketplace_status: printed`) -> visualizes on products.
+  - "Sell in the Shop" -> Saves to gallery (`marketplace_status: pending_review`) -> goes to facilitator queue.
+- Secondary actions: Try Again
 
 **Creator Gallery**
 - Grid view of creator's artworks
@@ -116,10 +119,10 @@ The entire UI must be designed for cognitive accessibility first. This is not a 
 - Static mockup — not real products
 - "This could be in a shop. Coming soon."
 
-**Facilitator Mode**
+**Facilitator Mode & Dashboard**
 - Toggle on onboarding: "I'm helping someone create"
-- Unlocks: creator naming, session notes, artwork review before gallery save
-- Same accessibility-first creation flow throughout
+- Unlocks: Facilitator login, creator naming, session tracking.
+- Dedicated Organizer Queue (`/facilitator/dashboard`) to review artworks submitted to "Sell in the Shop". Facilitator must explicitly "Approve" for them to appear on the public mock marketplace.
 
 ### 1.4 Tech Stack — Frontend
 - Framework: Next.js (React) — PWA, mobile browser compatible, no app store needed
@@ -165,6 +168,7 @@ moderation_pass  BOOLEAN
 session_notes    TEXT nullable
 created_at       TIMESTAMP
 is_public        BOOLEAN default false
+marketplace_status TEXT default private (private | pending_review | approved | rejected | printed)
 ip_owner         TEXT default creator
 ```
 

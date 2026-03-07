@@ -114,47 +114,49 @@ export default function CanvasEditor({ backgroundImageBase64, shouldExport, onEx
     return (
         <div className="flex flex-col gap-4 w-full">
             {/* Toolbar */}
-            <div className="flex flex-wrap items-center justify-between gap-2 p-2 bg-surface rounded-creator border border-border mt-2">
-                <div className="flex gap-2 items-center">
+            <div className="flex flex-wrap items-center justify-between gap-4 p-4 bg-surface rounded-creator border-2 border-border mt-2">
+                <div className="flex gap-4 items-center overflow-x-auto w-full pb-2 hide-scrollbar">
                     <button
                         onClick={() => setTool("pen")}
-                        className={`p-2 rounded-md ${tool === "pen" ? "bg-signal text-ink" : "bg-canvas"}`}
+                        className={`min-h-[72px] min-w-[72px] text-3xl rounded-creator active:scale-[0.96] transition-transform flex items-center justify-center ${tool === "pen" ? "bg-signal text-ink" : "bg-canvas border-2 border-border"}`}
                         title="Pen"
                     >
                         ✏️
                     </button>
                     <button
                         onClick={() => setTool("eraser")}
-                        className={`p-2 rounded-md ${tool === "eraser" ? "bg-signal text-ink" : "bg-canvas"}`}
+                        className={`min-h-[72px] min-w-[72px] text-3xl rounded-creator active:scale-[0.96] transition-transform flex items-center justify-center ${tool === "eraser" ? "bg-signal text-ink" : "bg-canvas border-2 border-border"}`}
                         title="Eraser"
                     >
                         🧽
                     </button>
 
-                    <div className="h-6 w-px bg-border mx-1" />
+                    <div className="h-12 w-px bg-border mx-2 flex-shrink-0" />
 
                     {COLORS.map((c) => (
                         <button
                             key={c}
                             onClick={() => { setTool("pen"); setColor(c); }}
-                            className={`w-6 h-6 rounded-full border border-border ${color === c && tool === "pen" ? "ring-2 ring-signal ring-offset-2" : ""}`}
+                            className={`min-h-[72px] min-w-[72px] rounded-full active:scale-[0.96] transition-transform border-4 ${color === c && tool === "pen" ? "border-signal shadow-md" : "border-border"}`}
                             style={{ backgroundColor: c }}
                         />
                     ))}
                 </div>
 
-                <button onClick={handleClear} className="text-xs font-bold text-muted hover:text-ink">
-                    {language === "en" ? "Clear" : "Hapus Semua"}
-                </button>
+                <div className="w-full flex justify-end mt-2">
+                    <button onClick={handleClear} className="min-h-[72px] px-6 rounded-creator bg-canvas border-2 border-border font-bold text-ink active:scale-[0.96] transition-transform">
+                        {language === "en" ? "Clear Canvas" : "Hapus Semua"}
+                    </button>
+                </div>
             </div>
 
             {/* Sticker Tray */}
-            <div className="flex gap-3 overflow-x-auto pb-2 -mx-2 px-2 no-scrollbar">
+            <div className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2 hide-scrollbar">
                 {STICKERS.map((sticker) => (
                     <button
                         key={sticker}
                         onClick={() => addSticker(sticker)}
-                        className="text-2xl hover:scale-110 active:scale-90 transition-transform bg-canvas p-2 rounded-creator border border-border min-w-12 text-center"
+                        className="text-4xl hover:scale-105 active:scale-95 transition-transform bg-surface min-h-[72px] min-w-[72px] flex items-center justify-center rounded-creator border-2 border-border flex-shrink-0"
                     >
                         {sticker}
                     </button>

@@ -15,6 +15,7 @@ interface SaveRequest {
     state: CreationFlowState;
     artworkUrl: string; // Base64 data string
     facilitatorData?: FacilitatorPayload | null;
+    marketplaceStatus: 'private' | 'pending_review' | 'printed';
 }
 
 export async function POST(request: Request) {
@@ -99,7 +100,8 @@ export async function POST(request: Request) {
                 photo_used: !!body.state.photo_base64,
                 moderation_pass: true,
                 session_notes: fd?.sessionNotes || null,
-                is_public: fd ? fd.isPublic : false, // Private by default unless approved
+                is_public: fd ? fd.isPublic : false, // Still private internally until officially 'approved' for shop
+                marketplace_status: body.marketplaceStatus || 'private',
                 ip_owner: 'creator' // Strict requirement
             });
 
