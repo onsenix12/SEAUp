@@ -16,7 +16,7 @@
 > What is being worked on RIGHT NOW or should be started NEXT.
 
 ```
-[ ] 0.4 Configure Vercel deployment + confirm mobile preview works
+[ ] 1.1 Onboarding screen — language selector + CTA
 ```
 
 *When you begin a task, move it here. When done, move it to Completed below.*
@@ -30,10 +30,10 @@ Work through these in sequence. Do not skip ahead.
 - [x] **0.1** Initialise Next.js project (App Router, TypeScript strict, Tailwind)
 - [x] **0.2** Configure Supabase project — create tables per schema in requirements.md
 - [x] **0.3** Set up environment variables (.env.local template)
-- [ ] **0.4** Configure Vercel deployment + confirm mobile preview works
-- [ ] **0.5** Create `/types/index.ts` with all TypeScript interfaces
-- [ ] **0.6** Create Supabase client wrapper in `/lib/supabase/`
-- [ ] **0.7** Create Google AI wrapper stubs in `/lib/google-ai/` (Gemini, Imagen, SafeSearch)
+- [x] **0.4** Configure Vercel deployment + confirm mobile preview works
+- [x] **0.5** Create `/types/index.ts` with all TypeScript interfaces
+- [x] **0.6** Create Supabase client wrapper in `/lib/supabase/`
+- [x] **0.7** Create Google AI wrapper stubs in `/lib/google-ai/` (Gemini, Imagen, SafeSearch)
 
 ### Phase 1 — Creation Flow (Core MVP)
 - [ ] **1.1** Onboarding screen — language selector + CTA
@@ -94,6 +94,10 @@ Work through these in sequence. Do not skip ahead.
 - 2026-03-07: **0.1** Initialise Next.js project (App Router, TypeScript strict, Tailwind)
 - 2026-03-07: **0.2** Configure Supabase project — create tables per schema
 - 2026-03-07: **0.3** Set up environment variables (.env.local template)
+- 2026-03-07: **0.4** Configure Vercel deployment + confirm mobile preview works
+- 2026-03-07: **0.5** Create `/types/index.ts` with all TypeScript interfaces
+- 2026-03-07: **0.6** Create Supabase client wrapper in `/lib/supabase/`
+- 2026-03-07: **0.7** Create Google AI wrapper stubs in `/lib/google-ai/`
 
 ---
 
@@ -113,7 +117,12 @@ Work through these in sequence. Do not skip ahead.
 - The `create-next-app` failed at the root because Next.js template does not allow capital letters in the directory name. Handled by creating in a `temp-app` folder and moving the files.
 - [x] Task 0.2 Configure Supabase project completed. Generated the `supabase/schema.sql` script with the exact schema from `requirements.md`, including the `ip_owner = 'creator'` strict constraint on the artworks table.
 - [x] Task 0.3 Set up environment variables completed. Added `.env.example` with the exact keys required by `agent.md`.
-- Next phase: Configure Vercel deployment + confirm mobile preview works.
+- [x] Task 0.4 Configure Vercel deployment completed. App is deployed securely to https://sea-up.vercel.app/.
+- [x] Task 0.5 Create `types/index.ts` completed. Mapped out `ApiResponse`, database models (`Creator`, `Artwork`, `Facilitator`, `Session`), and `CreationFlowState`.
+- [x] Task 0.6 Create Supabase client wrapper completed. Installed `@supabase/ssr` to configure `lib/supabase/index.ts` with server-side utility functions.
+- [x] Task 0.7 Create Google AI wrapper stubs completed. Added `@google/generative-ai` SDK and created `lib/google-ai/index.ts` with placeholder logic for Gemini, Imagen, and SafeSearch.
+- Phase 0 Complete!
+- Next phase: Phase 1.1 Onboarding screen.
 ```
 
 ---
@@ -124,7 +133,7 @@ Work through these in sequence. Do not skip ahead.
 | Next.js project initialised | ✅ Done |
 | Supabase project created | ✅ SQL Schema Prepared |
 | Google AI API key configured | ❌ Not started |
-| Vercel deployment live | ❌ Not started |
-| Mobile preview tested | ❌ Not started |
+| Vercel deployment live | ✅ Deployed |
+| Mobile preview tested | ✅ Tested |
 | Imagen 3 output quality confirmed | ❌ Not started |
 | Gemini latency from SG IPs measured | ❌ Not started |
