@@ -17,7 +17,7 @@ export default function Step4Photo() {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     const handleSkip = () => {
-        router.push("/create/step-5-style");
+        router.push("/create/step-5-canvas");
     };
 
     const handleNext = () => {
@@ -25,7 +25,7 @@ export default function Step4Photo() {
         if (selectedImage) {
             updateState({ photo_base64: selectedImage });
         }
-        router.push("/create/step-5-style");
+        router.push("/create/step-5-canvas");
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +45,7 @@ export default function Step4Photo() {
             {/* Step Counter */}
             <div className="absolute top-0 right-0">
                 <span className="font-mono text-xs text-muted tracking-widest">
-                    04 / 06
+                    04 / 07
                 </span>
             </div>
 

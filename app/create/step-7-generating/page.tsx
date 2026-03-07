@@ -28,9 +28,9 @@ export default function Step6Generating() {
                 const result = await response.json();
 
                 if (result.success && isMounted) {
-                    // Temporary: Save url to state so Step 7 can read it
+                    // Temporary: Save url to state so Step 8 can read it
                     sessionStorage.setItem("generated_artwork_url", result.data);
-                    router.push("/create/step-7-result");
+                    router.push("/create/step-8-result");
                 } else if (!result.success && isMounted) {
                     console.error("Generation failed:", result.error);
                 }
@@ -53,7 +53,7 @@ export default function Step6Generating() {
             {/* Step Counter */}
             <div className="absolute top-0 right-0">
                 <span className="font-mono text-xs text-muted tracking-widest">
-                    06 / 06
+                    07 / 07
                 </span>
             </div>
 

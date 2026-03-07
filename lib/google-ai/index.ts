@@ -32,10 +32,11 @@ export async function buildArtPrompt(
 
         promptParts.push({ text: userPrompt });
 
-        // If a photo was provided (data URL format)
-        if (selections.photo_base64) {
+        // If a photo or canvas was provided (data URL format)
+        const referenceImage = selections.canvas_base64 || selections.photo_base64;
+        if (referenceImage) {
             try {
-                const matches = selections.photo_base64.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+                const matches = referenceImage.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
                 if (matches && matches.length === 3) {
                     promptParts.push({
                         inlineData: {
@@ -45,10 +46,10 @@ export async function buildArtPrompt(
                     });
                     promptParts.push({ text: "\nUse the provided image as a strong structural and thematic reference, but reinterpret it entirely through the requested Art Style, Mood, and Colors." });
                 } else {
-                    console.warn("Invalid photo_base64 format provided to buildArtPrompt.");
+                    console.warn("Invalid image format provided to buildArtPrompt.");
                 }
             } catch (e) {
-                console.error("Failed to parse photo_base64:", e);
+                console.error("Failed to parse reference image:", e);
             }
         }
 

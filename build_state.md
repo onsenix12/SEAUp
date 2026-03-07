@@ -41,9 +41,10 @@ Work through these in sequence. Do not skip ahead.
 - [x] **1.3** Step 2: Colour palette selection screen
 - [x] **1.4** Step 3: Subject selection screen
 - [x] **1.5** Step 4: Photo input screen (optional, skippable)
-- [x] **1.6** Step 5: Style selection screen (optional, skippable)
-- [x] **1.7** Step 6: Generating screen — animated loading
-- [x] **1.8** Step 7: Artwork result screen — display + Save / Try Again / Share
+- [x] **1.5.1** Step 5: Interactive Canvas step (react-konva collage & drawing)
+- [x] **1.6** Step 6: Style selection screen (optional, skippable)
+- [x] **1.7** Step 7: Generating screen — animated loading
+- [x] **1.8** Step 8: Artwork result screen — display + Save / Try Again / Share
 - [x] **1.9** Creation flow state management (selections passed through all steps)
 
 ### Phase 2 — AI Integration
@@ -103,8 +104,9 @@ Work through these in sequence. Do not skip ahead.
 - 2026-03-07: **1.3** Step 2: Colour palette selection screen
 - 2026-03-07: **1.4** Step 3: Subject selection screen
 - 2026-03-07: **1.5** Step 4: Photo input screen
-- 2026-03-07: **1.6** Step 5: Style selection screen
-- 2026-03-07: **1.7** Step 6: Generating screen
+- 2026-03-07: **1.5.1** Step 5: Canvas step added, shifting subsequent step numbers
+- 2026-03-07: **1.6** Step 6: Style selection screen
+- 2026-03-07: **1.7** Step 7: Generating screen
 
 ---
 
@@ -150,6 +152,7 @@ Work through these in sequence. Do not skip ahead.
 - Refactored `app/api/create/route.ts` to add robust object input validation.
 - Implemented Phase 4 integration: when double moderation failure occurs, we now invoke a Supabase service client to permanently write the `FAIL` record with the creator_id back to the `artworks` table, alerting facilitators.
 - Addressed `photo_base64` failure edge-cases with better regex mapping and error catching in build prompt.
+- [x] Inserted new Interactive Canvas (Step 5) expanding flow to 7 steps. Users can draw/sticker over their Step 4 photos using `react-konva`. `canvas_base64` is now exported and stitched into the Gemini reference prompt.
 ```
 
 ---

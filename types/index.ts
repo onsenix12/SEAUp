@@ -68,6 +68,7 @@ export interface CreationFlowState {
     colour_palette?: string;
     subject?: string;
     photo_base64?: string; // Optional camera input
+    canvas_base64?: string; // Optional user drawing/collage
     style: string; // Optional, defaults to 'abstract_illustration'
 }
 

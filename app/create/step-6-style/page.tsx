@@ -21,12 +21,12 @@ export default function Step5Style() {
 
     const handleSelect = (styleId: string) => {
         updateState({ style: styleId });
-        router.push("/create/step-6-generating");
+        router.push("/create/step-7-generating");
     };
 
     const handleSkip = () => {
         // Keep default from CreationFlowContext
-        router.push("/create/step-6-generating");
+        router.push("/create/step-7-generating");
     };
 
     return (
@@ -35,7 +35,7 @@ export default function Step5Style() {
             {/* Step Counter */}
             <div className="absolute top-0 right-0">
                 <span className="font-mono text-xs text-muted tracking-widest">
-                    05 / 06
+                    06 / 07
                 </span>
             </div>
 
