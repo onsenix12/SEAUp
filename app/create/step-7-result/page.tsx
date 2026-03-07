@@ -2,6 +2,7 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCreationFlow } from "@/contexts/CreationFlowContext";
+import { useFacilitator } from "@/contexts/FacilitatorContext";
 import { COPY } from "@/lib/i18n/copy";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -9,11 +10,10 @@ import { useState } from "react";
 export default function Step7Result() {
     const { language } = useLanguage();
     const { state, resetState } = useCreationFlow();
+    const { sessionData } = useFacilitator();
     const router = useRouter();
     const t = COPY[language];
 
-    // Use the actual generated image from SessionStorage (temp persistence for MVP until DB integration in Phase 3)
-    // Safe read for SSR context
     const getCachedArtwork = () => {
         if (typeof window !== "undefined") {
             return sessionStorage.getItem("generated_artwork_url") || "https://placehold.co/1024x1024/F4F3EF/1C1C1A.png?text=Loading...";
@@ -24,25 +24,57 @@ export default function Step7Result() {
     const artworkUrl = getCachedArtwork();
     const [isSaving, setIsSaving] = useState(false);
 
+    // Facilitator-only state
+    const [sessionNotes, setSessionNotes] = useState("");
+    const [isPublic, setIsPublic] = useState(false);
+
     const handleTryAgain = () => {
-        console.log("Previous final state was:", state);
-        // Reset flow and go back to step 1
         resetState();
         sessionStorage.removeItem("generated_artwork_url");
         router.replace("/create/step-1-mood");
     };
 
     const handleSaveToGallery = async () => {
-        // Phase 2: Save to Supabase and trigger public gallery display
         setIsSaving(true);
-        await new Promise(resolve => setTimeout(resolve, 800)); // Simulate save
-        setIsSaving(false);
-        // router.push("/gallery");
-        console.log("Saved to gallery");
+        try {
+            const savePayload = {
+                state,
+                artworkUrl,
+                facilitatorData: sessionData.isActive ? {
+                    facilitatorId: sessionData.facilitatorId,
+                    creatorName: sessionData.creatorName,
+                    organisation: sessionData.organisation,
+                    sessionStartTime: sessionData.sessionStartTime,
+                    sessionNotes,
+                    isPublic
+                } : null
+            };
+
+            const response = await fetch('/api/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(savePayload)
+            });
+            const data = await response.json();
+
+            if (!data.success) {
+                console.error("Save failed:", data.error);
+                alert(`Failed to save to gallery: ${data.error}`);
+                return;
+            }
+
+            sessionStorage.removeItem("generated_artwork_url");
+            router.push("/gallery");
+
+        } catch (error) {
+            console.error("Error saving to gallery:", error);
+            alert("An error occurred while saving.");
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const handleShare = async () => {
-        // Phase 2: Open native share tray or copy link
         if (navigator.share) {
             try {
                 await navigator.share({
@@ -77,6 +109,32 @@ export default function Step7Result() {
                     className="w-full h-full object-cover"
                 />
             </div>
+
+            {/* Facilitator Override Block */}
+            {sessionData.isActive && (
+                <div className="w-full bg-brand/10 border-2 border-brand rounded-creator p-4 mb-6 flex flex-col gap-4">
+                    <h3 className="font-creator font-bold text-ink/80 text-sm tracking-wide">FACILITATOR REVIEW</h3>
+
+                    <div>
+                        <textarea
+                            value={sessionNotes}
+                            onChange={(e) => setSessionNotes(e.target.value)}
+                            placeholder="Session notes (optional)..."
+                            className="w-full bg-surface border-2 border-border rounded-creator px-4 py-3 font-creator text-sm focus:outline-none focus:border-brand min-h-[80px]"
+                        />
+                    </div>
+
+                    <label className="flex items-center gap-3 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={isPublic}
+                            onChange={(e) => setIsPublic(e.target.checked)}
+                            className="w-6 h-6 rounded-md border-2 border-brand text-brand focus:ring-brand cursor-pointer"
+                        />
+                        <span className="font-creator font-bold text-ink/80">Approve for Public Gallery</span>
+                    </label>
+                </div>
+            )}
 
             {/* Actions */}
             <div className="flex flex-col gap-4 w-full mt-auto">

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Serif_Display, Outfit, DM_Mono, Nunito } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { FacilitatorProvider } from "@/contexts/FacilitatorContext";
 
 const dmSerifDisplay = DM_Serif_Display({
   weight: "400",
@@ -41,7 +42,9 @@ export default function RootLayout({
         className={`${dmSerifDisplay.variable} ${outfit.variable} ${dmMono.variable} ${nunito.variable} font-body bg-canvas text-ink antialiased`}
       >
         <LanguageProvider>
-          {children}
+          <FacilitatorProvider>
+            {children}
+          </FacilitatorProvider>
         </LanguageProvider>
       </body>
     </html>

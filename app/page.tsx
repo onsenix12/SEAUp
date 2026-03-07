@@ -52,6 +52,14 @@ export default function OnboardingScreen() {
           {t.cta}
         </button>
 
+        {/* Facilitator Mode Access */}
+        <button
+          onClick={() => router.push('/facilitator/login')}
+          className="mt-8 text-ink/60 font-creator text-lg underline underline-offset-4 decoration-ink/30 hover:text-ink active:scale-95 transition-all"
+        >
+          {language === 'en' ? "I'm helping someone create" : "Saya mendampingi seseorang berkarya"}
+        </button>
+
       </div>
     </main >
   );

@@ -16,7 +16,7 @@
 > What is being worked on RIGHT NOW or should be started NEXT.
 
 ```
-[ ] 1.8 Step 7: Artwork result screen — display + Save / Try Again / Share
+[ ] 5.1 Mock marketplace preview screen (static product mockup images)
 ```
 
 *When you begin a task, move it here. When done, move it to Completed below.*
@@ -56,19 +56,19 @@ Work through these in sequence. Do not skip ahead.
 - [x] **2.7** Latency test — confirm ≤ 15 seconds from selection to result
 
 ### Phase 3 — Gallery & Storage
-- [ ] **3.1** Save artwork to Supabase Storage (CDN image)
-- [ ] **3.2** Write artwork record to Supabase DB (with ip_owner = 'creator')
-- [ ] **3.3** Creator gallery screen — grid view of artworks
-- [ ] **3.4** Full-screen artwork view with share link
-- [ ] **3.5** Artwork attribution — name + date overlaid on image
+- [x] **3.1** Save artwork to Supabase Storage (CDN image)
+- [x] **3.2** Write artwork record to Supabase DB (with ip_owner = 'creator')
+- [x] **3.3** Creator gallery screen — grid view of artworks
+- [x] **3.4** Full-screen artwork view with share link
+- [x] **3.5** Artwork attribution — name + date overlaid on image
 
 ### Phase 4 — Facilitator Mode
-- [ ] **4.1** Facilitator toggle on onboarding screen
-- [ ] **4.2** Facilitator magic link auth (Supabase Auth)
-- [ ] **4.3** Creator naming within a facilitator session
-- [ ] **4.4** Session notes field (optional)
-- [ ] **4.5** Artwork review / approve before gallery save
-- [ ] **4.6** Session record written to DB on completion
+- [x] **4.1** Facilitator toggle on onboarding screen
+- [x] **4.2** Facilitator magic link auth (Supabase Auth)
+- [x] **4.3** Creator naming within a facilitator session
+- [x] **4.4** Session notes field (optional)
+- [x] **4.5** Artwork review / approve before gallery save
+- [x] **4.6** Session record written to DB on completion
 
 ### Phase 5 — Mock Marketplace & Polish
 - [ ] **5.1** Mock marketplace preview screen (static product mockup images)
