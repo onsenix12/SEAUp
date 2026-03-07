@@ -2,7 +2,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { CreationFlowState, ApiResponse } from "@/types";
 
 // Initialize the SDK. This runs ONLY server-side.
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY || "");
+const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY || "";
+const genAI = new GoogleGenerativeAI(apiKey);
 
 // ==========================================
 // 1. Gemini 2.0 Flash (Prompt Construction)
@@ -11,50 +12,108 @@ export async function buildArtPrompt(
     selections: CreationFlowState
 ): Promise<ApiResponse<string>> {
     try {
-        // Stub: In Phase 2 this will call Gemini 2.0 Flash with multimodal input
-        // combining the photo (if provided) and the text selections.
-        // For now, it returns a simulated structured prompt.
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-flash",
+            systemInstruction: "You are an expert creative director. Your job is to take the user's simple visual choices and construct a highly detailed, evocative prompt for an image generation model. The output must be English ONLY and focus on visual aesthetics. Do NOT provide any conversational text, just the literal string of the prompt. The artwork should be an abstract or illustrative piece suitable for commercial licensing.",
+            generationConfig: {
+                temperature: 0.7,
+                maxOutputTokens: 250,
+            }
+        });
 
-        const basePrompt = `An artwork featuring ${selections.subject}. 
-      The mood is ${selections.mood}. 
-      The colour palette is ${selections.colour_palette}. 
-      The style is ${selections.style || "abstract_illustration"}.`;
+        const promptParts: Array<string | { inlineData: { data: string, mimeType: string } }> = [];
+
+        let userPrompt = "Create an image generation prompt with the following elements:\n";
+        if (selections.subject) userPrompt += `- Subject: ${selections.subject}\n`;
+        if (selections.mood) userPrompt += `- Mood: ${selections.mood}\n`;
+        if (selections.colour_palette) userPrompt += `- Color Palette: ${selections.colour_palette}\n`;
+        if (selections.style) userPrompt += `- Art Style: ${selections.style}\n`;
+
+        promptParts.push(userPrompt);
+
+        // If a photo was provided (data URL format)
+        if (selections.photo_base64) {
+            const matches = selections.photo_base64.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+            if (matches && matches.length === 3) {
+                promptParts.push({
+                    inlineData: {
+                        mimeType: matches[1],
+                        data: matches[2]
+                    }
+                });
+                promptParts.push("\nUse the provided image as a strong structural and thematic reference, but reinterpret it entirely through the requested Art Style, Mood, and Colors.");
+            }
+        }
+
+        const result = await model.generateContent(promptParts);
+        const generatedPrompt = result.response.text().trim();
 
         return {
             success: true,
-            data: basePrompt,
+            data: generatedPrompt,
         };
     } catch (error) {
         console.error("Gemini Error:", error);
         return {
             success: false,
-            error: "Failed to construct prompt.",
+            error: error instanceof Error ? `Gemini Error: ${error.message}` : "Failed to construct prompt.",
         };
     }
 }
 
 // ==========================================
-// 2. Imagen 3 (Image Generation)
+// 2. Imagen (Image Generation)
 // ==========================================
 export async function generateImageFromPrompt(
     prompt: string
 ): Promise<ApiResponse<string>> {
     try {
-        // Stub: In Phase 2 this will call the Imagen 3 API.
-        // Returning a placeholder image URL for the MVP UI development.
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
 
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        const payload = {
+            instances: [
+                { prompt: prompt }
+            ],
+            parameters: {
+                sampleCount: 1
+            }
+        };
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(`Imagen API Error: ${data.error?.message || response.statusText}`);
+        }
+
+        let imageUrl = "";
+
+        // Imagen 4 via predict returns predictions array with mimeType and bytesBase64Encoded
+        if (data.predictions && data.predictions.length > 0) {
+            const prediction = data.predictions[0];
+            if (prediction.bytesBase64Encoded) {
+                imageUrl = `data:${prediction.mimeType || 'image/png'};base64,${prediction.bytesBase64Encoded}`;
+            }
+        }
+
+        if (!imageUrl) {
+            throw new Error("No valid image data returned from Imagen");
+        }
 
         return {
             success: true,
-            data: "https://placehold.co/1024x1024/F4F3EF/1C1C1A.png?text=Imagen+3+Placeholder",
+            data: imageUrl,
         };
     } catch (error) {
         console.error("Imagen Error:", error);
         return {
             success: false,
-            error: "Failed to generate image.",
+            error: error instanceof Error ? `Imagen Error: ${error.message}` : "Failed to generate image.",
         };
     }
 }
@@ -66,12 +125,40 @@ export async function checkImageSafety(
     imageUrlOrBase64: string
 ): Promise<ApiResponse<boolean>> {
     try {
-        // Stub: In Phase 2 this will call Google Cloud Vision SafeSearch API.
-        // Returns true if the image passes all safety thresholds.
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-flash",
+            systemInstruction: "You are a content safety moderator. You must analyze the provided image and reply ONLY with 'PASS' if the image is safe for general audiences including children, or 'FAIL' if it contains explicit, violent, shocking, or inappropriate content.",
+        });
+
+        // Parse the base64 string
+        const parts: Array<string | { inlineData: { data: string, mimeType: string } }> = [];
+        parts.push("Analyze this image for safety.");
+
+        const matches = imageUrlOrBase64.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+        if (matches && matches.length === 3) {
+            parts.push({
+                inlineData: {
+                    mimeType: matches[1],
+                    data: matches[2]
+                }
+            });
+        } else {
+            throw new Error("Invalid image format provided for safety check.");
+        }
+
+        const result = await model.generateContent(parts);
+        const responseText = result.response.text().trim().toUpperCase();
+
+        if (responseText === 'FAIL') {
+            return {
+                success: true,
+                data: false, // Explicitly failed moderation
+            };
+        }
 
         return {
             success: true,
-            data: true, // Simulate passing moderation
+            data: true, // Passed moderation
         };
     } catch (error) {
         console.error("SafeSearch Error:", error);
