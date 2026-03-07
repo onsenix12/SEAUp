@@ -112,7 +112,7 @@ export default function Step7Result() {
 
             {/* Facilitator Override Block */}
             {sessionData.isActive && (
-                <div className="w-full bg-brand/10 border-2 border-brand rounded-creator p-4 mb-6 flex flex-col gap-4">
+                <div className="w-full bg-signal/20 border-2 border-signal rounded-creator p-4 mb-6 flex flex-col gap-4">
                     <h3 className="font-creator font-bold text-ink/80 text-sm tracking-wide">FACILITATOR REVIEW</h3>
 
                     <div>
@@ -120,7 +120,7 @@ export default function Step7Result() {
                             value={sessionNotes}
                             onChange={(e) => setSessionNotes(e.target.value)}
                             placeholder="Session notes (optional)..."
-                            className="w-full bg-surface border-2 border-border rounded-creator px-4 py-3 font-creator text-sm focus:outline-none focus:border-brand min-h-[80px]"
+                            className="w-full bg-surface border-2 border-border rounded-creator px-4 py-3 font-creator text-sm focus:outline-none focus:border-ink min-h-[80px]"
                         />
                     </div>
 
@@ -129,7 +129,7 @@ export default function Step7Result() {
                             type="checkbox"
                             checked={isPublic}
                             onChange={(e) => setIsPublic(e.target.checked)}
-                            className="w-6 h-6 rounded-md border-2 border-brand text-brand focus:ring-brand cursor-pointer"
+                            className="w-6 h-6 rounded-md border-2 border-ink text-ink focus:ring-ink cursor-pointer"
                         />
                         <span className="font-creator font-bold text-ink/80">Approve for Public Gallery</span>
                     </label>

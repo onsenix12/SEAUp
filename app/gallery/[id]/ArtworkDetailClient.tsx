@@ -85,7 +85,7 @@ export default function ArtworkDetailClient({ artwork }: ArtworkDetailProps) {
             <div className="flex flex-col gap-4 w-full mt-auto">
                 <button
                     onClick={() => router.push(`/marketplace/${artwork.id}`)}
-                    className="w-full min-h-[72px] bg-brand text-canvas font-creator font-bold text-xl rounded-creator shadow-sm active:scale-[0.98] transition-transform flex items-center justify-center gap-3"
+                    className="w-full min-h-[72px] bg-ink text-surface font-creator font-bold text-xl rounded-creator shadow-sm active:scale-[0.98] transition-transform flex items-center justify-center gap-3"
                 >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>

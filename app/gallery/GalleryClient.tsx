@@ -28,8 +28,9 @@ export default function GalleryClient({ initialArtworks }: GalleryClientProps) {
                 <button
                     onClick={() => router.push('/')}
                     className="p-2 -ml-2 text-ink/70 active:scale-95 transition-transform"
+                    aria-label={t.backBtn}
                 >
-                    <svg title="Back" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M15 18l-6-6 6-6" />
                     </svg>
                 </button>
@@ -44,7 +45,7 @@ export default function GalleryClient({ initialArtworks }: GalleryClientProps) {
                     <p className="font-creator text-xl text-ink/60 mb-8">{t.empty}</p>
                     <Link
                         href="/create/step-1-mood"
-                        className="w-full min-h-[72px] bg-brand text-canvas font-creator font-bold text-xl rounded-creator shadow-sm flex items-center justify-center active:scale-[0.98] transition-transform"
+                        className="w-full min-h-[72px] bg-ink text-surface font-creator font-bold text-xl rounded-creator shadow-sm flex items-center justify-center active:scale-[0.98] transition-transform"
                     >
                         {t.createBtn}
                     </Link>
@@ -63,6 +64,7 @@ export default function GalleryClient({ initialArtworks }: GalleryClientProps) {
                                 alt={`Artwork created on ${new Date(artwork.created_at).toLocaleDateString()}`}
                                 className="w-full h-full object-cover"
                                 loading="lazy"
+                                suppressHydrationWarning
                             />
                         </Link>
                     ))}
