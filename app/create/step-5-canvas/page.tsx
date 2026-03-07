@@ -6,6 +6,7 @@ import { COPY } from "@/lib/i18n/copy";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import { StepLayout } from "@/components/ui/StepLayout";
 
 // Dynamically import CanvasEditor to avoid SSR issues with Konva
 const CanvasEditor = dynamic(() => import("@/components/CanvasEditor"), {
@@ -41,27 +42,14 @@ export default function Step5Canvas() {
     };
 
     return (
-        <div className="flex-1 flex flex-col w-full h-full max-w-md mx-auto relative pt-8 pb-8">
-
-            {/* Step Counter */}
-            <div className="absolute top-0 right-0">
-                <span className="font-mono text-xs text-muted tracking-widest">
-                    05 / 07
-                </span>
-            </div>
-
-            {/* Header */}
-            <div className="text-center mb-6 mt-4">
-                <h2 className="font-creator text-3xl font-bold text-ink">
-                    {/* @ts-ignore */}
-                    {t.canvasQuestion}
-                </h2>
-                <p className="font-body text-muted mt-2">
-                    {/* @ts-ignore */}
-                    {t.canvasSubtitle}
-                </p>
-            </div>
-
+        <StepLayout
+            currentStep={5}
+            totalSteps={7}
+            // @ts-ignore
+            title={t.canvasQuestion}
+            // @ts-ignore
+            subtitle={t.canvasSubtitle}
+        >
             {/* Main Interaction Area */}
             <div className="flex-1 flex flex-col items-center w-full">
                 <CanvasEditor
@@ -86,7 +74,6 @@ export default function Step5Canvas() {
                     {language === 'en' ? 'Skip for now' : 'Lewati dulu'}
                 </button>
             </div>
-
-        </div>
+        </StepLayout>
     );
 }

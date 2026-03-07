@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useFacilitator } from "@/contexts/FacilitatorContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { PendingArtworkCard } from "@/components/ui/PendingArtworkCard";
 
 interface PendingArtwork {
     id: string;
@@ -101,42 +102,18 @@ export default function FacilitatorDashboardClient({ initialArtworks }: { initia
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {artworks.map(art => (
-                            <div key={art.id} className="bg-surface rounded-creator border-2 border-border overflow-hidden flex flex-col">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={art.image_url} alt="Pending Artwork" className="w-full aspect-square object-cover bg-border" />
-
-                                <div className="p-4 flex-1 flex flex-col">
-                                    <div className="mb-4">
-                                        <h3 className="font-creator font-bold text-lg leading-tight uppercase">
-                                            {art.creators?.name || "Anonymous Creator"}
-                                        </h3>
-                                        <p className="font-mono text-xs text-muted mt-1 tracking-wider uppercase">
-                                            {art.creators?.organisation}
-                                        </p>
-                                    </div>
-
-                                    <div className="text-sm font-body text-ink/80 mb-6 bg-canvas p-3 rounded-xl border border-border">
-                                        Made with: {art.mood}, {art.colour_palette}, {art.subject}
-                                    </div>
-
-                                    <div className="mt-auto flex gap-3">
-                                        <button
-                                            onClick={() => handleAction(art.id, 'rejected')}
-                                            disabled={isUpdating === art.id}
-                                            className="flex-1 min-h-[56px] border-2 border-border text-ink font-bold rounded-creator hover:bg-canvas disabled:opacity-50"
-                                        >
-                                            Keep Private
-                                        </button>
-                                        <button
-                                            onClick={() => handleAction(art.id, 'approved')}
-                                            disabled={isUpdating === art.id}
-                                            className="flex-1 min-h-[56px] bg-ink text-surface font-bold rounded-creator hover:opacity-90 disabled:opacity-50"
-                                        >
-                                            Approve Shop
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                            <PendingArtworkCard
+                                key={art.id}
+                                id={art.id}
+                                imageUrl={art.image_url}
+                                creatorName={art.creators?.name || "Anonymous Creator"}
+                                organisation={art.creators?.organisation}
+                                mood={art.mood}
+                                colourPalette={art.colour_palette}
+                                subject={art.subject}
+                                isUpdating={isUpdating === art.id}
+                                onAction={handleAction}
+                            />
                         ))}
                     </div>
                 )}

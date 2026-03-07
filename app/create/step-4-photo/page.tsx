@@ -5,6 +5,7 @@ import { useCreationFlow } from "@/contexts/CreationFlowContext";
 import { COPY } from "@/lib/i18n/copy";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
+import { StepLayout } from "@/components/ui/StepLayout";
 
 export default function Step4Photo() {
     const { language } = useLanguage();
@@ -40,22 +41,7 @@ export default function Step4Photo() {
     };
 
     return (
-        <div className="flex-1 flex flex-col w-full h-full max-w-md mx-auto relative pt-8 pb-8">
-
-            {/* Step Counter */}
-            <div className="absolute top-0 right-0">
-                <span className="font-mono text-xs text-muted tracking-widest">
-                    04 / 07
-                </span>
-            </div>
-
-            {/* Header */}
-            <div className="text-center mb-12 mt-4">
-                <h2 className="font-creator text-3xl font-bold text-ink">
-                    {t.photoQuestion}
-                </h2>
-            </div>
-
+        <StepLayout currentStep={4} totalSteps={7} title={t.photoQuestion}>
             {/* Main Interaction Area */}
             <div className="flex-1 flex flex-col items-center w-full min-h-[300px]">
                 {selectedImage ? (
@@ -114,7 +100,6 @@ export default function Step4Photo() {
                     </button>
                 )}
             </div>
-
-        </div>
+        </StepLayout>
     );
 }
