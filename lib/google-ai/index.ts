@@ -1,5 +1,6 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, Part } from "@google/generative-ai";
 import { CreationFlowState, ApiResponse } from "@/types";
+import "server-only";
 
 // Initialize the SDK. This runs ONLY server-side.
 const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY || "";
@@ -21,7 +22,7 @@ export async function buildArtPrompt(
             }
         });
 
-        const promptParts: Array<string | { inlineData: { data: string, mimeType: string } }> = [];
+        const promptParts: Part[] = [];
 
         let userPrompt = "Create an image generation prompt with the following elements:\n";
         if (selections.subject) userPrompt += `- Subject: ${selections.subject}\n`;
@@ -29,19 +30,25 @@ export async function buildArtPrompt(
         if (selections.colour_palette) userPrompt += `- Color Palette: ${selections.colour_palette}\n`;
         if (selections.style) userPrompt += `- Art Style: ${selections.style}\n`;
 
-        promptParts.push(userPrompt);
+        promptParts.push({ text: userPrompt });
 
         // If a photo was provided (data URL format)
         if (selections.photo_base64) {
-            const matches = selections.photo_base64.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-            if (matches && matches.length === 3) {
-                promptParts.push({
-                    inlineData: {
-                        mimeType: matches[1],
-                        data: matches[2]
-                    }
-                });
-                promptParts.push("\nUse the provided image as a strong structural and thematic reference, but reinterpret it entirely through the requested Art Style, Mood, and Colors.");
+            try {
+                const matches = selections.photo_base64.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+                if (matches && matches.length === 3) {
+                    promptParts.push({
+                        inlineData: {
+                            mimeType: matches[1],
+                            data: matches[2]
+                        }
+                    });
+                    promptParts.push({ text: "\nUse the provided image as a strong structural and thematic reference, but reinterpret it entirely through the requested Art Style, Mood, and Colors." });
+                } else {
+                    console.warn("Invalid photo_base64 format provided to buildArtPrompt.");
+                }
+            } catch (e) {
+                console.error("Failed to parse photo_base64:", e);
             }
         }
 
@@ -131,19 +138,23 @@ export async function checkImageSafety(
         });
 
         // Parse the base64 string
-        const parts: Array<string | { inlineData: { data: string, mimeType: string } }> = [];
-        parts.push("Analyze this image for safety.");
+        const parts: Part[] = [];
+        parts.push({ text: "Analyze this image for safety." });
 
-        const matches = imageUrlOrBase64.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-        if (matches && matches.length === 3) {
-            parts.push({
-                inlineData: {
-                    mimeType: matches[1],
-                    data: matches[2]
-                }
-            });
-        } else {
-            throw new Error("Invalid image format provided for safety check.");
+        try {
+            const matches = imageUrlOrBase64.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+            if (matches && matches.length === 3) {
+                parts.push({
+                    inlineData: {
+                        mimeType: matches[1],
+                        data: matches[2]
+                    }
+                });
+            } else {
+                throw new Error("Invalid image format provided for safety check.");
+            }
+        } catch (e) {
+            throw new Error("Failed to parse image data for safety check.");
         }
 
         const result = await model.generateContent(parts);

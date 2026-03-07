@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { CreationFlowState } from "@/types";
+import { CreationFlowState, ApiResponse } from "@/types";
 import { buildArtPrompt, generateImageFromPrompt, checkImageSafety } from "@/lib/google-ai";
+import { createSupabaseServiceClient } from "@/lib/supabase";
+
+const FALLBACK_FLAG_IMAGE = "https://placehold.co/1024x1024/FFD1D1/D8000C.png?text=Content+Policy+Flag";
 
 export async function POST(req: NextRequest) {
     try {
-        const body = (await req.json()) as CreationFlowState;
+        const body = (await req.json()) as CreationFlowState & { creatorId?: string };
 
-        // 1. Validate input
-        if (!body.mood || !body.colour_palette || !body.subject) {
-            return NextResponse.json(
-                { success: false, error: "Missing required creation fields." },
+        // 1. Strict Input Validation
+        if (typeof body !== 'object' || body === null || !body.mood || !body.colour_palette || !body.subject || !body.style) {
+            return NextResponse.json<ApiResponse>(
+                { success: false, error: "Missing or invalid required creation fields: mood, colour_palette, subject, and style." },
                 { status: 400 }
             );
         }
@@ -17,7 +20,8 @@ export async function POST(req: NextRequest) {
         // 2. Build Prompt via Gemini
         const promptResult = await buildArtPrompt(body);
         if (!promptResult.success || !promptResult.data) {
-            return NextResponse.json(
+            console.error("Failed to build prompt:", promptResult.error);
+            return NextResponse.json<ApiResponse>(
                 { success: false, error: promptResult.error || "Failed to build prompt." },
                 { status: 500 }
             );
@@ -34,7 +38,13 @@ export async function POST(req: NextRequest) {
             const imageResult = await generateImageFromPrompt(artPrompt);
 
             if (!imageResult.success || !imageResult.data) {
-                if (attempt === 2) throw new Error("Image generation failed twice.");
+                console.error(`Imagen generation failed on attempt ${attempt}:`, imageResult.error);
+                if (attempt === 2) {
+                    return NextResponse.json<ApiResponse>(
+                        { success: false, error: "Image generation failed twice." },
+                        { status: 500 }
+                    );
+                }
                 continue; // Silently retry
             }
 
@@ -48,27 +58,48 @@ export async function POST(req: NextRequest) {
                 moderationPass = true;
                 break; // Safe!
             } else {
-                console.log(`Self-moderation failed on attempt ${attempt}. Retrying.`);
+                console.warn(`Self-moderation failed on attempt ${attempt}. Retrying.`);
             }
         }
 
         // 5. Fallback logic if both generation/moderation attempts fail
         if (!moderationPass) {
             console.error("Critical: Safesearch failed twice. Delivering fallback image.");
-            // Notify facilitator via DB in Phase 4
-            finalImageUrl = "https://placehold.co/1024x1024/FFD1D1/D8000C.png?text=Content+Policy+Flag";
+            finalImageUrl = FALLBACK_FLAG_IMAGE;
+
+            // Phase 4: Notify facilitator via DB
+            if (body.creatorId) {
+                try {
+                    const supabase = await createSupabaseServiceClient();
+                    await supabase.from('artworks').insert({
+                        creator_id: body.creatorId,
+                        image_url: finalImageUrl,
+                        prompt_used: artPrompt,
+                        mood: body.mood,
+                        colour_palette: body.colour_palette,
+                        subject: body.subject,
+                        style: body.style,
+                        photo_used: !!body.photo_base64,
+                        moderation_pass: false,
+                        is_public: false,
+                        ip_owner: 'creator' // constraint
+                    });
+                } catch (dbError) {
+                    console.error("Failed to write moderation failure back to DB:", dbError);
+                }
+            }
         }
 
         // 6. Return payload
-        return NextResponse.json({
+        return NextResponse.json<ApiResponse<string>>({
             success: true,
             data: finalImageUrl,
         });
 
     } catch (error) {
         console.error("Create API Error:", error);
-        return NextResponse.json(
-            { success: false, error: "Internal server error during creation." },
+        return NextResponse.json<ApiResponse>(
+            { success: false, error: error instanceof Error ? error.message : "Internal server error during creation." },
             { status: 500 }
         );
     }

@@ -6,9 +6,9 @@
 ---
 
 ## Last Updated
-- Date: [AGENT: fill in date]
-- Session duration: [AGENT: fill in]
-- Updated by: [AGENT: fill in — e.g. "Avi + Antigravity, session 1"]
+- Date: 2026-03-07
+- Session duration: 10 mins
+- Updated by: Avi + Antigravity, session 2
 
 ---
 
@@ -145,6 +145,11 @@ Work through these in sequence. Do not skip ahead.
 - [x] Tasks 2.4, 2.5, 2.6 End-to-end creation flow API route completed. Created `app/api/create/route.ts` functioning as the core serverless backend for creation. It receives the `CreationFlowState`, validates inputs, constructs the prompt via Gemini, attempts Imagen 3 generation with an automated retry loop for moderation fails, and handles final safety fallback logic. Wired this to `step-6-generating/page.tsx` using native fetch and outputting to session storage cache read natively by `step-7-result/page.tsx`.
 - [x] Task 2.7 Latency test completed. Successfully migrated from deprecated `imagen-3.0-generate-002` to fully supported `imagen-4.0-generate-001` via direct REST endpoint using the standard Gemini SDK key, bypassing restrictions. Verified generation succeeds end-to-end.
 - Next phase: Phase 3 Gallery & Storage.
+[Session 2 — 2026-03-07]
+- Refactored `lib/google-ai/index.ts` to include `server-only`, improved prompt array inputs mapping using official Gemini `Part[]` type handling.
+- Refactored `app/api/create/route.ts` to add robust object input validation.
+- Implemented Phase 4 integration: when double moderation failure occurs, we now invoke a Supabase service client to permanently write the `FAIL` record with the creator_id back to the `artworks` table, alerting facilitators.
+- Addressed `photo_base64` failure edge-cases with better regex mapping and error catching in build prompt.
 ```
 
 ---
