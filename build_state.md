@@ -6,9 +6,9 @@
 ---
 
 ## Last Updated
-- Date: 2026-03-07
-- Session duration: 10 mins
-- Updated by: Avi + Antigravity, session 2
+- Date: 2026-03-08
+- Session duration: N/A
+- Updated by: Avi + Antigravity, session 3
 
 ---
 
@@ -48,8 +48,8 @@ Work through these in sequence. Do not skip ahead.
 - [x] **1.9** Creation flow state management (selections passed through all steps)
 
 ### Phase 2 — AI Integration
-- [x] **2.1** Gemini 2.0 Flash — prompt construction from user selections + optional photo
-- [x] **2.2** Imagen 3 — image generation from Gemini prompt
+- [x] **2.1** Gemini 2.5 Flash — prompt construction from user selections + optional photo
+- [x] **2.2** Imagen 4 — image generation from Gemini prompt
 - [x] **2.3** Google SafeSearch — moderation check on generated image
 - [x] **2.4** Silent regeneration logic on moderation fail
 - [x] **2.5** Fallback image + facilitator notification on double fail
@@ -107,6 +107,14 @@ Work through these in sequence. Do not skip ahead.
 - 2026-03-07: **1.5.1** Step 5: Canvas step added, shifting subsequent step numbers
 - 2026-03-07: **1.6** Step 6: Style selection screen
 - 2026-03-07: **1.7** Step 7: Generating screen
+- 2026-03-07: **1.8** Step 8: Artwork result screen
+- 2026-03-07: **1.9** Creation flow state management
+- 2026-03-07: **Phase 2 — AI Integration** (2.1 to 2.7 completed API logic, fallback images, moderation)
+- 2026-03-07: **Phase 3 — Gallery & Storage** (3.1 to 3.5 completed Supabase save, full-screen view, attribution)
+- 2026-03-07: **Phase 4 — Facilitator Mode** (4.1 to 4.6 completed magic link auth, review/approve, session records)
+- 2026-03-07: **Phase 5 — Mock Marketplace & Polish** (5.1 to 5.6 completed scattered masonry layout, detailed product view, responsiveness audit, language support, "Coming soon" screens)
+- 2026-03-08: **Marketplace UX Enhancements** (Detailed view, masonry layout grid similar to Plasticbionic)
+- 2026-03-08: **Codebase refactoring** (Fix image src error in Step9Print, resolved overall UI bugs, updated README)
 
 ---
 
@@ -153,6 +161,15 @@ Work through these in sequence. Do not skip ahead.
 - Implemented Phase 4 integration: when double moderation failure occurs, we now invoke a Supabase service client to permanently write the `FAIL` record with the creator_id back to the `artworks` table, alerting facilitators.
 - Addressed `photo_base64` failure edge-cases with better regex mapping and error catching in build prompt.
 - [x] Inserted new Interactive Canvas (Step 5) expanding flow to 7 steps. Users can draw/sticker over their Step 4 photos using `react-konva`. `canvas_base64` is now exported and stitched into the Gemini reference prompt.
+
+[Session 3 — 2026-03-08]
+- Integrated Canva-like interactive canvas into the flow (Step 1.5.1) and stitched `canvas_base64` into prompt.
+- Refactored components, state management, API routes for canvas and image generation.
+- Implemented and finalized Facilitator Mode, adding magic link auth and session recording.
+- Completed Phase 5 Mock Marketplace. Updated the marketplace into a dynamic scattered masonry grid with detailed views that pull directly from Supabase.
+- Added placeholders for Music and Video flow.
+- Polished the UI across Android and Chrome (responsiveness, tap targets), and finalized Bahasa Indonesia language support.
+- Refactored components (e.g., fixed image rendering bug in Step9Print) and updated the README file.
 ```
 
 ---
@@ -162,8 +179,8 @@ Work through these in sequence. Do not skip ahead.
 |---|---|
 | Next.js project initialised | ✅ Done |
 | Supabase project created | ✅ SQL Schema Prepared |
-| Google AI API key configured | ❌ Not started |
+| Google AI API key configured | ✅ Done |
 | Vercel deployment live | ✅ Deployed |
 | Mobile preview tested | ✅ Tested |
-| Imagen 3 output quality confirmed | ❌ Not started |
+| Imagen 4 output quality confirmed | ✅ Done |
 | Gemini latency from SG IPs measured | ❌ Not started |
