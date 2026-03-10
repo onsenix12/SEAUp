@@ -6,9 +6,9 @@
 ---
 
 ## Last Updated
-- Date: 2026-03-09
+- Date: 2026-03-10
 - Session duration: N/A
-- Updated by: Avi + Antigravity, session 4
+- Updated by: Avi + Antigravity, session 5
 
 ---
 
@@ -123,6 +123,8 @@ Work through these in sequence. Do not skip ahead.
 - 2026-03-09: **Admin Dashboard** (Created `/admin/dashboard` route to allow viewing the queue without Supabase login, bypassing auth limits)
 - 2026-03-09: **Approval Modal & Live Marketplace** (Implemented `/api/facilitator/review` allowing organizers to input Title, Story, Price, Age, Location. Rewrote `/marketplace` to pull live approved pieces and showcase dynamic details with Print Mockups.)
 - 2026-03-09: **Marketplace UI Polish** (Rebranded "Facilitator" to "In-house Co-artist" in Marketplace copy. Implemented scroll-triggered Typewriter animation on the hero quote and brand-aligned Signal Yellow hover highlights for key text.)
+- 2026-03-10: **Marketplace UX Refinements** (Adjusted artwork title hover blur to be static. Removed "About" and "For Corporates" links from the navigation pill. Slowed Typewriter animation speed by 30%.)
+- 2026-03-10: **Co-creation Quote Redesign** (Replaced typewriter animation on the quote with a static hover interaction — hovering highlights "the brush" and "the artist" in Signal Yellow via CSS transition. Fixed quote copy: comma after "brush", removed stray inner quotation mark.)
 
 ---
 
@@ -185,6 +187,13 @@ Work through these in sequence. Do not skip ahead.
 - Refined the gallery to be user-specific and added functionality to delete artworks.
 - Improved the realism of Print Mockups (tote bag, phone case) by refining CSS and displaying actual generated artwork instead of placeholders.
 - Resolved creator nickname persistence bugs across sessions by fixing local storage usage in `CreationFlowContext`.
+
+[Session 5 — 2026-03-10]
+- Refined marketplace navigation pill: removed "About" and "For Corporates" links, keeping only "Marketplace".
+- Fixed artwork title hover effect on the marketplace detail page to use a static blur (not an intensifying one).
+- Slowed typewriter animation speed by 30% to feel less rushed.
+- Replaced the scroll-triggered typewriter animation on the co-creation quote with a clean static hover interaction: hovering highlights "the brush" and "the artist" in Signal Yellow (300ms CSS transition).
+- Fixed co-creation quote copy: corrected punctuation to "AI was the brush, She was the artist." — comma after 'brush', and removed a stray inner closing quotation mark.
 ```
 
 ---
