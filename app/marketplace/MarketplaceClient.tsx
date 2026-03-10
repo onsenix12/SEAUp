@@ -35,8 +35,6 @@ export default function MarketplaceClient({ artworks }: { artworks: Artwork[] })
                     </Link>
                     <div className="flex items-center gap-6 font-body text-sm text-ink font-medium">
                         <span className="cursor-pointer hover:opacity-70 transition-opacity">Marketplace</span>
-                        <span className="cursor-pointer hover:opacity-70 transition-opacity">About</span>
-                        <span className="cursor-pointer hover:opacity-70 transition-opacity">For Corporates</span>
                     </div>
                 </div>
             </div>
