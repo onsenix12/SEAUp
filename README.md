@@ -1,14 +1,12 @@
-# SEA-Up Creative 🎨
+# SEA-Up 🎨
 
 SEA-Up Creative is an AI-powered creative platform built from the ground up for people with intellectual disabilities (ID) across ASEAN. It enables ID individuals to produce artworks through guided visual choices — without text prompts — and displays them in a personal gallery. A mock marketplace preview shows where the platform will lead in the future.
-
-This project was built for a pilot at **MINDS Singapore**. 
 
 ## The Mission: Closing the Gap
 
 Across ASEAN, an estimated 7 million people live with intellectual disabilities (2.8 million in Indonesia alone). While generative AI tools like Midjourney or DALL-E promise to democratise creativity, they have largely widened the gap by requiring high digital literacy, precise English text prompting, and abstract reasoning.
 
-**SEA-Up Creative** solves this by providing a highly tactile, visual-first interface where creators choose moods, colours, and subjects. AI (Google Gemini 2.5 Flash + Imagen 4) acts purely as an amplifier, translating their intent into gallery-grade visual outputs. The goal? To close the gap between "art made" and "income earned", ensuring the digital creative economy includes everyone.
+**SEA-Up** solves this by providing a highly tactile, visual-first interface where creators choose moods, colours, and subjects. AI (Google Gemini 2.5 Flash + Imagen 4) acts purely as an amplifier, translating their intent into gallery-grade visual outputs. The goal? To close the gap between "art made" and "income earned", ensuring the digital creative economy includes everyone.
 
 For deeper context, read our full documentation:
 - 📖 [The Problem Document](problem.md) — Why 7 million people are excluded from the creative economy.
@@ -17,7 +15,7 @@ For deeper context, read our full documentation:
 
 ## The User Journeys
 
-SEA-Up Creative connects three distinct users in a unified ecosystem:
+SEA-Up connects three distinct users in a unified ecosystem:
 
 ### 1. The Creator (Individuals with ID)
 - **Discovery**: Accessing a welcoming platform in Bahasa Indonesia or English ("Let's make something").

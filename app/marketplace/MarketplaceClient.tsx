@@ -18,8 +18,7 @@ export default function MarketplaceClient({ artworks }: { artworks: Artwork[] })
         setMounted(true);
     }, []);
 
-    const quoteLines = ["“AI was the brush.", "She was the artist.”"];
-    const { ref: quoteRef, displayed: quoteDisplayed, done: quoteDone } = useTypewriterOnScroll(quoteLines, 50);
+    // Typewriter removed for static hover layout
 
     const featured = artworks.length > 0 ? artworks[0] : null;
     const remainingWorks = artworks.slice(1);
@@ -202,26 +201,13 @@ export default function MarketplaceClient({ artworks }: { artworks: Artwork[] })
                 <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-10 items-center">
                     <div className="lg:col-span-6 lg:pr-12">
                         <h2
-                            ref={quoteRef as React.RefObject<HTMLHeadingElement>}
-                            className="font-display text-4xl md:text-5xl lg:text-6xl leading-[1.1] text-ink"
+                            className="font-display text-4xl md:text-5xl lg:text-6xl leading-[1.1] text-ink group cursor-default"
                         >
-                            <span style={{ display: 'block' }}>
-                                {quoteDisplayed[0] || <span className="opacity-0 select-none">{quoteLines[0]}</span>}
+                            <span className="block">
+                                “AI was <span className="transition-colors duration-300 group-hover:text-signal">the brush</span>,
                             </span>
-                            <span style={{ display: 'block' }}>
-                                {quoteDisplayed[1]}
-                                {!quoteDone && (
-                                    <span
-                                        className="font-mono text-signal"
-                                        style={{
-                                            animation: 'blink-cursor 0.7s step-end infinite',
-                                            display: 'inline-block',
-                                            marginLeft: '2px',
-                                            lineHeight: 1,
-                                            verticalAlign: 'middle',
-                                        }}
-                                    >|</span>
-                                )}
+                            <span className="block mt-1 md:mt-0">
+                                She was <span className="transition-colors duration-300 group-hover:text-signal">the artist</span>.”
                             </span>
                         </h2>
                     </div>
