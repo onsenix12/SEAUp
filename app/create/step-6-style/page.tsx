@@ -7,13 +7,7 @@ import { useRouter } from "next/navigation";
 import { StepLayout } from "@/components/ui/StepLayout";
 import { OptionCard } from "@/components/ui/OptionCard";
 
-// Optional styles. The prompt engineering (Phase 2) will map these to Imagen styles.
-const STYLES = [
-    { id: "3d", label_en: "3D Illustration", label_id: "Ilustrasi 3D", icon: "🧊" },
-    { id: "watercolor", label_en: "Watercolor", label_id: "Cat Air", icon: "🖌️" },
-    { id: "pixel", label_en: "Pixel Art", label_id: "Seni Piksel", icon: "👾" },
-    { id: "sketch", label_en: "Pencil Sketch", label_id: "Sketsa Pensil", icon: "✏️" },
-];
+import { STYLES, TOTAL_STEPS } from "@/lib/constants/creation";
 
 export default function Step5Style() {
     const { language } = useLanguage();
@@ -32,7 +26,7 @@ export default function Step5Style() {
     };
 
     return (
-        <StepLayout currentStep={6} totalSteps={7} title={t.styleQuestion}>
+        <StepLayout currentStep={6} totalSteps={TOTAL_STEPS} title={t.styleQuestion}>
             {/* Style Choices Grid - 2 columns for better fit if many options */}
             <div className="flex-1 grid grid-cols-2 gap-4 w-full content-start">
                 {STYLES.map((style) => (

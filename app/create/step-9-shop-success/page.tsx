@@ -21,7 +21,7 @@ export default function Step9ShopSuccess() {
                     {language === 'en' ? 'Sent to Organizer!' : 'Terkirim ke Penyelenggara!'}
                 </h2>
                 <p className="font-body text-muted text-lg px-4">
-                    {language === 'en' ? 'Your artwork looks great. Your facilitator will review it before it goes live in the public shop.' : 'Karya Anda tampak hebat. Fasilitator Anda akan meninjaunya sebelum ditayangkan.'}
+                    {language === 'en' ? 'Your artwork looks great. A SEA-Up co-artist will review it before it goes live in the public shop.' : 'Karya Anda tampak hebat. Rekan seniman SEA-Up akan meninjaunya sebelum ditayangkan.'}
                 </p>
             </div>
 
@@ -32,7 +32,7 @@ export default function Step9ShopSuccess() {
                 <div className="flex flex-col gap-3 text-left mt-4 text-sm font-body text-ink/80">
                     <div className="flex items-start gap-3">
                         <span className="text-signal font-bold mt-0.5">1.</span>
-                        <span>{language === 'en' ? 'Facilitator reviews for gallery standards.' : 'Fasilitator meninjau untuk standar galeri.'}</span>
+                        <span>{language === 'en' ? 'A co-artist reviews for gallery standards.' : 'Rekan seniman meninjau untuk standar galeri.'}</span>
                     </div>
                     <div className="flex items-start gap-3">
                         <span className="text-signal font-bold mt-0.5">2.</span>

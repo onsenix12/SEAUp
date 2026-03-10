@@ -3,6 +3,7 @@ import { DM_Serif_Display, Outfit, DM_Mono } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { FacilitatorProvider } from "@/contexts/FacilitatorContext";
+import { CreationFlowProvider } from "@/contexts/CreationFlowContext";
 
 const dmSerifDisplay = DM_Serif_Display({
   weight: "400",
@@ -38,7 +39,9 @@ export default function RootLayout({
       >
         <LanguageProvider>
           <FacilitatorProvider>
-            {children}
+            <CreationFlowProvider>
+              {children}
+            </CreationFlowProvider>
           </FacilitatorProvider>
         </LanguageProvider>
       </body>

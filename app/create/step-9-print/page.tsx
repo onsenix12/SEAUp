@@ -15,10 +15,13 @@ export default function Step9Print() {
     const [artworkUrl, setArtworkUrl] = useState<string | null>(null);
 
     useEffect(() => {
-        // Since we cleared the session storage after saving, we pass it down via state or we just show a placeholder if refreshed.
-        // For the MVP, if they land here, we'll try to get it, otherwise fallback.
-        // Ideally we'd have passed the ID in the URL, but for this demo step:
-        setArtworkUrl("https://placehold.co/1024x1024/F4F3EF/1C1C1A.png?text=Your+Artwork");
+        const storedUrl = sessionStorage.getItem("generated_artwork_url");
+        if (storedUrl) {
+            setArtworkUrl(storedUrl);
+        } else {
+            // Elegant placeholder instead of broken text snippet
+            setArtworkUrl("https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=800&q=80");
+        }
     }, []);
 
     return (
@@ -36,28 +39,40 @@ export default function Step9Print() {
             {/* Mock Products Grid */}
             <div className="grid grid-cols-2 gap-4 mb-8">
                 {/* Product 1: Tote Bag */}
-                <div className="bg-surface rounded-creator border-2 border-border p-4 flex flex-col items-center justify-center aspect-square relative overflow-hidden group">
+                <div className="bg-surface rounded-creator border-2 border-border p-4 flex flex-col items-center justify-center aspect-square relative overflow-hidden group shadow-sm">
                     <div className="absolute inset-0 bg-canvas opacity-50"></div>
-                    <div className="relative z-10 w-24 h-28 bg-[#EBE9E1] rounded-b-xl rounded-t-sm shadow-inner flex items-center justify-center border border-black/5">
+                    <div className="relative z-10 flex flex-col items-center mt-2">
                         {/* Tote Straps mock */}
-                        <div className="absolute -top-6 w-12 h-8 rounded-t-full border-4 border-[#EBE9E1] border-b-0"></div>
-                        {/* Artwork placement */}
-                        <div className="w-16 h-16 bg-white overflow-hidden shadow-sm">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={artworkUrl || undefined} alt="Artwork on Tote" className="w-full h-full object-cover opacity-90 mix-blend-multiply" />
+                        <div className="w-[52px] h-8 border-[5px] border-[#EBE9E1] rounded-t-[20px] border-b-0 -mb-[2px] z-0 shadow-sm"></div>
+                        {/* Tote Body */}
+                        <div className="w-24 h-[104px] bg-gradient-to-b from-[#FAF9F6] to-[#EBE9E1] rounded-b-xl rounded-t-sm shadow-md border border-black/10 flex flex-col items-center justify-center relative z-10 overflow-hidden">
+                            {/* Fabric Texture (subtle) */}
+                            <div className="absolute inset-0 opacity-[0.03] mix-blend-multiply pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'4\' height=\'4\' viewBox=\'0 0 4 4\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M1 3h1v1H1V3zm2-2h1v1H3V1z\' fill=\'%23000\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")' }}></div>
+
+                            {/* Artwork placement */}
+                            <div className="w-14 h-14 bg-white shadow-sm mt-1 mb-2 relative overflow-hidden border border-black/5">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={artworkUrl || undefined} alt="Artwork on Tote" className="w-full h-full object-cover mix-blend-multiply opacity-95" />
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Product 2: Phone Case */}
-                <div className="bg-surface rounded-creator border-2 border-border p-4 flex flex-col items-center justify-center aspect-square relative overflow-hidden group">
+                <div className="bg-surface rounded-creator border-2 border-border p-4 flex flex-col items-center justify-center aspect-square relative overflow-hidden group shadow-sm">
                     <div className="absolute inset-0 bg-canvas opacity-50"></div>
-                    <div className="relative z-10 w-16 h-32 bg-ink rounded-[20px] shadow-lg flex items-center justify-center overflow-hidden border-2 border-ink">
+                    <div className="relative z-10 w-[68px] h-[136px] bg-[#1C1C1A] rounded-[22px] shadow-lg flex items-center justify-center overflow-hidden border-[3px] border-[#2A2A28] ring-1 ring-black/20">
                         {/* Camera bump */}
-                        <div className="absolute top-2 left-2 w-6 h-6 bg-black/40 rounded-lg backdrop-blur-sm z-20"></div>
+                        <div className="absolute top-[8px] left-[8px] w-6 h-[22px] bg-black/60 rounded-[8px] backdrop-blur-md z-20 border border-white/5 shadow-inner flex flex-col gap-[2px] items-center justify-center py-1">
+                            <div className="w-[6px] h-[6px] rounded-full bg-black shadow-inner"></div>
+                            <div className="w-[6px] h-[6px] rounded-full bg-black shadow-inner"></div>
+                        </div>
+                        {/* Shadow Gradient Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-white/10 z-10 pointer-events-none mix-blend-overlay"></div>
+
                         {/* Artwork placement */}
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={artworkUrl || undefined} alt="Artwork on Phone" className="w-full h-full object-cover opacity-90" />
+                        <img src={artworkUrl || undefined} alt="Artwork on Phone" className="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105" />
                     </div>
                 </div>
             </div>

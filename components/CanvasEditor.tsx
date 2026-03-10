@@ -8,7 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 interface CanvasEditorProps {
     backgroundImageBase64?: string;
     shouldExport: boolean;
-    onExport: (base64: string) => void;
+    onExport: (base64: string, hasDrawn: boolean, stickersUsed: number) => void;
 }
 
 interface DrawLine {
@@ -43,9 +43,11 @@ export default function CanvasEditor({ backgroundImageBase64, shouldExport, onEx
     useEffect(() => {
         if (shouldExport && stageRef.current) {
             const dataUrl = stageRef.current.toDataURL({ pixelRatio: 2 });
-            onExport(dataUrl);
+            const hasDrawn = lines.length > 0;
+            const stickersUsed = stickers.length;
+            onExport(dataUrl, hasDrawn, stickersUsed);
         }
-    }, [shouldExport, onExport]);
+    }, [shouldExport, onExport, lines.length, stickers.length]);
 
     const handleMouseDown = (e: any) => {
         if (e.target.name() === "sticker") return; // Don't draw if clicking on a sticker

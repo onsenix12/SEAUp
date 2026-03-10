@@ -2,6 +2,8 @@ export const COPY = {
     en: {
         languageName: "English",
         cta: "Let's make something",
+        nicknameQuestion: "What's your name?",
+        nicknamePlaceholder: "Enter nickname...",
         generating: "We're making your artwork...",
         moodQuestion: "How are you feeling today?",
         colourQuestion: "Pick your colours",
@@ -17,6 +19,8 @@ export const COPY = {
     id: {
         languageName: "Bahasa Indonesia",
         cta: "Ayo berkarya",
+        nicknameQuestion: "Siapa namamu?",
+        nicknamePlaceholder: "Masukkan nama...",
         generating: "Kami sedang membuat karya kamu...",
         moodQuestion: "Bagaimana perasaanmu hari ini?",
         colourQuestion: "Pilih warnamu",

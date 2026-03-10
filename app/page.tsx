@@ -9,8 +9,8 @@ export default function OnboardingScreen() {
   const router = useRouter();
 
   const handleStart = () => {
-    // Navigates to the first step of the Creation Flow
-    router.push("/create/step-1-mood");
+    // Navigates to the nickname step of the Creation Flow
+    router.push("/create/start");
   };
 
   return (

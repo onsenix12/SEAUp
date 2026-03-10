@@ -6,6 +6,7 @@ import { useFacilitator } from "@/contexts/FacilitatorContext";
 import { COPY } from "@/lib/i18n/copy";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function Step8Decision() {
     const { language } = useLanguage();
@@ -23,7 +24,7 @@ export default function Step8Decision() {
 
     const artworkUrl = getCachedArtwork();
     const [isSaving, setIsSaving] = useState(false);
-    const [choice, setChoice] = useState<'print' | 'shop' | null>(null);
+    const [choice, setChoice] = useState<'print' | 'shop' | 'save' | null>(null);
 
     const handleTryAgain = () => {
         resetState();
@@ -32,9 +33,9 @@ export default function Step8Decision() {
         router.replace("/create/step-1-mood");
     };
 
-    const handleSaveDecision = async (decision: 'printed' | 'pending_review') => {
+    const handleSaveDecision = async (decision: 'printed' | 'pending_review' | 'private') => {
         setIsSaving(true);
-        setChoice(decision === 'printed' ? 'print' : 'shop');
+        setChoice(decision === 'printed' ? 'print' : decision === 'pending_review' ? 'shop' : 'save');
 
         const existingId = sessionStorage.getItem("existing_artwork_id");
 
@@ -58,11 +59,15 @@ export default function Step8Decision() {
                     return;
                 }
 
-                sessionStorage.removeItem("generated_artwork_url");
+                if (decision !== 'printed') {
+                    sessionStorage.removeItem("generated_artwork_url");
+                }
                 sessionStorage.removeItem("existing_artwork_id");
 
                 if (decision === 'printed') {
                     router.push("/create/step-9-print");
+                } else if (decision === 'private') {
+                    router.push("/gallery");
                 } else {
                     router.push("/create/step-9-shop-success");
                 }
@@ -72,6 +77,7 @@ export default function Step8Decision() {
             const savePayload = {
                 state,
                 artworkUrl,
+                creationStory: sessionStorage.getItem("generated_creation_story") || "Created through visual choices.",
                 marketplaceStatus: decision,
                 facilitatorData: sessionData.isActive ? {
                     facilitatorId: sessionData.facilitatorId,
@@ -99,11 +105,15 @@ export default function Step8Decision() {
                 return;
             }
 
-            sessionStorage.removeItem("generated_artwork_url");
+            if (decision !== 'printed') {
+                sessionStorage.removeItem("generated_artwork_url");
+            }
 
             // Route based on decision
             if (decision === 'printed') {
                 router.push("/create/step-9-print");
+            } else if (decision === 'private') {
+                router.push("/gallery");
             } else {
                 router.push("/create/step-9-shop-success");
             }
@@ -130,33 +140,24 @@ export default function Step8Decision() {
             </div>
 
             {/* Artwork Display Area */}
-            <div className="w-full aspect-square rounded-creator overflow-hidden border-2 border-border shadow-md bg-canvas mb-8">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+            <div className="w-full aspect-square rounded-creator overflow-hidden border-2 border-border shadow-md bg-canvas mb-8 relative">
+                <Image
                     src={artworkUrl}
                     alt="Generated Artwork"
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    priority
                 />
             </div>
 
             {/* The Decision Layer */}
             <div className="flex flex-col gap-4 w-full mt-auto">
                 <button
-                    onClick={() => handleSaveDecision('printed')}
+                    onClick={() => handleSaveDecision('private')}
                     disabled={isSaving}
-                    className="w-full min-h-[80px] bg-canvas text-ink font-creator font-bold text-2xl rounded-creator border-2 border-border shadow-sm active:scale-[0.98] transition-transform disabled:opacity-70 flex flex-col items-center justify-center p-4 hover:border-signal group"
+                    className="w-full min-h-[80px] bg-signal text-ink font-creator font-bold text-2xl rounded-creator shadow-sm active:scale-[0.98] transition-transform disabled:opacity-70 flex items-center justify-center p-4 hover:bg-signal/90"
                 >
-                    <span>{choice === 'print' ? (language === 'en' ? 'Preparing...' : 'Siap-siap...') : (language === 'en' ? 'Print for Myself' : 'Cetak untuk Saya')}</span>
-                    <span className="text-sm font-body font-normal text-muted group-hover:text-ink">Put on a bag, phone case, and more</span>
-                </button>
-
-                <button
-                    onClick={() => handleSaveDecision('pending_review')}
-                    disabled={isSaving}
-                    className="w-full min-h-[80px] bg-signal text-ink font-creator font-bold text-2xl rounded-creator shadow-sm active:scale-[0.98] transition-transform disabled:opacity-70 flex flex-col items-center justify-center p-4"
-                >
-                    <span>{choice === 'shop' ? (language === 'en' ? 'Submitting...' : 'Mengirim...') : (language === 'en' ? 'Sell in the Shop' : 'Jual di Toko')}</span>
-                    <span className="text-sm font-body font-normal text-ink/80">Share with the world and organizers</span>
+                    {choice === 'save' ? (language === 'en' ? 'Saving...' : 'Menyimpan...') : (language === 'en' ? 'Save to Gallery' : 'Simpan ke Galeri')}
                 </button>
 
                 {/* Secondary Actions Row */}

@@ -7,12 +7,7 @@ import { useRouter } from "next/navigation";
 import { StepLayout } from "@/components/ui/StepLayout";
 import { OptionCard } from "@/components/ui/OptionCard";
 
-// Simulated Mood options (these match the 3 choices requirement)
-const MOODS = [
-    { id: "joy", label_en: "Happy", label_id: "Senang", color: "bg-joy", icon: "☀️" }, // Replace emojies with SVGs when available
-    { id: "calm", label_en: "Calm", label_id: "Tenang", color: "bg-calm", icon: "🌊" },
-    { id: "wonder", label_en: "Dreamy", label_id: "Melamun", color: "bg-wonder", icon: "✨" },
-];
+import { MOODS, TOTAL_STEPS } from "@/lib/constants/creation";
 
 export default function Step1Mood() {
     const { language } = useLanguage();
@@ -26,7 +21,7 @@ export default function Step1Mood() {
     };
 
     return (
-        <StepLayout currentStep={1} totalSteps={7} title={t.moodQuestion}>
+        <StepLayout currentStep={1} totalSteps={TOTAL_STEPS} title={t.moodQuestion}>
             {/* 3 Choices - Vertical Stack for immediate accessibility */}
             <div className="flex flex-col gap-4 w-full">
                 {MOODS.map((mood) => (

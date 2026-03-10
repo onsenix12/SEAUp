@@ -36,6 +36,12 @@ export interface Artwork {
     creator_id: string; // UUID
     image_url: string;
     prompt_used: string; // internal
+    title?: string;
+    price?: number;
+    creator_age?: number;
+    creator_location?: string;
+    description?: string;  // Facilitator-written marketplace description
+    creation_story?: string; // AI-generated story based on choices
     mood: string;
     colour_palette: string;
     subject: string;
@@ -46,6 +52,10 @@ export interface Artwork {
     is_public: boolean;
     marketplace_status?: 'private' | 'pending_review' | 'approved' | 'rejected';
     ip_owner: string; // strictly 'creator'
+    creators?: {
+        name: string | null;
+        organisation?: string;
+    };
     created_at: string;
 }
 
@@ -65,11 +75,15 @@ export interface Session {
 // Tracks user selections exactly as required by MVP
 
 export interface CreationFlowState {
+    nickname?: string;
     mood?: string;
     colour_palette?: string;
     subject?: string;
     photo_base64?: string; // Optional camera input
     canvas_base64?: string; // Optional user drawing/collage
+    has_drawn?: boolean; // Tracking if user used brush
+    photo_taken?: boolean; // Tracking if user took a photo
+    stickers_used?: number; // Tracking how many stickers were used
     style: string; // Optional, defaults to 'abstract_illustration'
 }
 

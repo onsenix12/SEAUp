@@ -3,6 +3,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCreationFlow } from "@/contexts/CreationFlowContext";
 import { COPY } from "@/lib/i18n/copy";
+import { TOTAL_STEPS } from "@/lib/constants/creation";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import dynamic from "next/dynamic";
@@ -35,16 +36,21 @@ export default function Step5Canvas() {
         setShouldExport(true);
     };
 
-    const handleCanvasExport = (base64: string) => {
+    const handleCanvasExport = (base64: string, hasDrawn: boolean, stickersUsed: number) => {
         // Called by CanvasEditor after it finishes generating toDataURL
-        updateState({ canvas_base64: base64 });
+        updateState({
+            canvas_base64: base64,
+            has_drawn: hasDrawn,
+            stickers_used: stickersUsed,
+            photo_taken: !!state.photo_base64 // Check if a photo base64 already exists in state
+        });
         router.push("/create/step-6-style");
     };
 
     return (
         <StepLayout
             currentStep={5}
-            totalSteps={7}
+            totalSteps={TOTAL_STEPS}
             // @ts-ignore
             title={t.canvasQuestion}
             // @ts-ignore

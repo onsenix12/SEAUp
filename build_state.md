@@ -6,9 +6,9 @@
 ---
 
 ## Last Updated
-- Date: 2026-03-08
+- Date: 2026-03-09
 - Session duration: N/A
-- Updated by: Avi + Antigravity, session 3
+- Updated by: Avi + Antigravity, session 4
 
 ---
 
@@ -115,6 +115,14 @@ Work through these in sequence. Do not skip ahead.
 - 2026-03-07: **Phase 5 — Mock Marketplace & Polish** (5.1 to 5.6 completed scattered masonry layout, detailed product view, responsiveness audit, language support, "Coming soon" screens)
 - 2026-03-08: **Marketplace UX Enhancements** (Detailed view, masonry layout grid similar to Plasticbionic)
 - 2026-03-08: **Codebase refactoring** (Fix image src error in Step9Print, resolved overall UI bugs, updated README)
+- 2026-03-08: **Database schema fix** (Resolved save error by aligning `artworks` table schema with `creation_story`)
+- 2026-03-09: **API Reliability** (Fixed Gemini JSON parsing error `Unterminated string in JSON`)
+- 2026-03-09: **Gallery Enhancements** (Made gallery user-specific and added delete functionality)
+- 2026-03-09: **Print Mockups** (Improved CSS styling for tote bag and phone case to display generated artwork realistically)
+- 2026-03-09: **State Management** (Resolved creator nickname persistence bugs in `CreationFlowContext`)
+- 2026-03-09: **Admin Dashboard** (Created `/admin/dashboard` route to allow viewing the queue without Supabase login, bypassing auth limits)
+- 2026-03-09: **Approval Modal & Live Marketplace** (Implemented `/api/facilitator/review` allowing organizers to input Title, Story, Price, Age, Location. Rewrote `/marketplace` to pull live approved pieces and showcase dynamic details with Print Mockups.)
+- 2026-03-09: **Marketplace UI Polish** (Rebranded "Facilitator" to "In-house Co-artist" in Marketplace copy. Implemented scroll-triggered Typewriter animation on the hero quote and brand-aligned Signal Yellow hover highlights for key text.)
 
 ---
 
@@ -170,6 +178,13 @@ Work through these in sequence. Do not skip ahead.
 - Added placeholders for Music and Video flow.
 - Polished the UI across Android and Chrome (responsiveness, tap targets), and finalized Bahasa Indonesia language support.
 - Refactored components (e.g., fixed image rendering bug in Step9Print) and updated the README file.
+
+[Session 4 — 2026-03-09]
+- Debugged and fixed `creation_story` schema mismatch causing artwork save errors to the database.
+- Fixed Gemini JSON parsing issues (`Unterminated string in JSON`).
+- Refined the gallery to be user-specific and added functionality to delete artworks.
+- Improved the realism of Print Mockups (tote bag, phone case) by refining CSS and displaying actual generated artwork instead of placeholders.
+- Resolved creator nickname persistence bugs across sessions by fixing local storage usage in `CreationFlowContext`.
 ```
 
 ---

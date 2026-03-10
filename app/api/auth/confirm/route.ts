@@ -10,9 +10,23 @@ export async function GET(request: NextRequest) {
     if (code) {
         const supabase = await createSupabaseServerClient()
 
-        const { error } = await supabase.auth.exchangeCodeForSession(code)
+        const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
-        if (!error) {
+        if (!error && data?.user) {
+            const { createSupabaseServiceClient } = await import('@/lib/supabase')
+            const serviceClient = await createSupabaseServiceClient()
+
+            const { error: insertError } = await serviceClient
+                .from('facilitators')
+                .upsert({
+                    id: data.user.id,
+                    email: data.user.email
+                }, { onConflict: 'id' })
+
+            if (insertError) {
+                console.error("Error creating facilitator record:", insertError)
+            }
+
             // successful auth, redirect
             redirect(next)
         }

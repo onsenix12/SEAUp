@@ -7,10 +7,15 @@ interface CreationFlowContextType {
     state: CreationFlowState;
     updateState: (updates: Partial<CreationFlowState>) => void;
     resetState: () => void;
+    validateState: () => boolean;
 }
 
 const initialState: CreationFlowState = {
+    nickname: "",
     style: "abstract_illustration", // Default fallback if skipped
+    has_drawn: false,
+    photo_taken: false,
+    stickers_used: 0,
 };
 
 const CreationFlowContext = createContext<CreationFlowContextType | undefined>(undefined);
@@ -18,8 +23,18 @@ const CreationFlowContext = createContext<CreationFlowContextType | undefined>(u
 export function CreationFlowProvider({ children }: { children: React.ReactNode }) {
     const [state, setState] = useState<CreationFlowState>(initialState);
 
+
+
     const updateState = (updates: Partial<CreationFlowState>) => {
-        setState((prev) => ({ ...prev, ...updates }));
+        setState((prev) => {
+            const newState = { ...prev, ...updates };
+            return newState;
+        });
+    };
+
+    const validateState = () => {
+        const requiredFields: (keyof CreationFlowState)[] = ['mood', 'colour_palette', 'subject'];
+        return requiredFields.every(field => !!state[field]);
     };
 
     const resetState = () => {
@@ -27,7 +42,7 @@ export function CreationFlowProvider({ children }: { children: React.ReactNode }
     };
 
     return (
-        <CreationFlowContext.Provider value={{ state, updateState, resetState }}>
+        <CreationFlowContext.Provider value={{ state, updateState, resetState, validateState }}>
             {children}
         </CreationFlowContext.Provider>
     );

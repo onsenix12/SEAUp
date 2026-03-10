@@ -27,7 +27,8 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const artPrompt = promptResult.data;
+        const artPrompt = promptResult.data.prompt;
+        const creationStory = promptResult.data.creation_story;
 
         // 3. Generate Image via Imagen (with automatic retry on safety fail)
         let finalImageUrl = "";
@@ -38,10 +39,12 @@ export async function POST(req: NextRequest) {
             const imageResult = await generateImageFromPrompt(artPrompt);
 
             if (!imageResult.success || !imageResult.data) {
-                console.error(`Imagen generation failed on attempt ${attempt}:`, imageResult.error);
+                console.error(`Imagen generation failed on attempt ${attempt}. Error:`, imageResult.error);
+                console.error(`Prompt used for failed generation:`, artPrompt);
+
                 if (attempt === 2) {
                     return NextResponse.json<ApiResponse>(
-                        { success: false, error: "Image generation failed twice." },
+                        { success: false, error: `Image generation failed twice. Final error: ${imageResult.error}` },
                         { status: 500 }
                     );
                 }
@@ -75,6 +78,7 @@ export async function POST(req: NextRequest) {
                         creator_id: body.creatorId,
                         image_url: finalImageUrl,
                         prompt_used: artPrompt,
+                        creation_story: creationStory, // added
                         mood: body.mood,
                         colour_palette: body.colour_palette,
                         subject: body.subject,
@@ -91,9 +95,13 @@ export async function POST(req: NextRequest) {
         }
 
         // 6. Return payload
-        return NextResponse.json<ApiResponse<string>>({
+        // Also returning the creation_story so step-7 can save it to session
+        return NextResponse.json({
             success: true,
-            data: finalImageUrl,
+            data: {
+                imageUrl: finalImageUrl,
+                creationStory: creationStory
+            },
         });
 
     } catch (error) {

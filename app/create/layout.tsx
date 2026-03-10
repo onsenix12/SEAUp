@@ -1,6 +1,5 @@
 import React from "react";
 import { DM_Mono } from "next/font/google";
-import { CreationFlowProvider } from "@/contexts/CreationFlowContext";
 
 const mono = DM_Mono({
     weight: "400",
@@ -20,9 +19,7 @@ export default function CreateLayout({
 
             {/* Content wrapper */}
             <div className="relative z-10 flex-1 flex flex-col max-w-5xl mx-auto w-full p-6 sm:p-8">
-                <CreationFlowProvider>
-                    {children}
-                </CreationFlowProvider>
+                {children}
             </div>
         </div>
     );

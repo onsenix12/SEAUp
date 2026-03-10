@@ -3,6 +3,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCreationFlow } from "@/contexts/CreationFlowContext";
 import { COPY } from "@/lib/i18n/copy";
+import { TOTAL_STEPS } from "@/lib/constants/creation";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { StepLayout } from "@/components/ui/StepLayout";
@@ -32,16 +33,19 @@ export default function Step4Photo() {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            // Create a local object URL to render the preview immediately
-            const objectUrl = URL.createObjectURL(file);
-            setSelectedImage(objectUrl);
-
-            // Note: For Phase 2/1.9, convert file to Base64 to send to Gemini/Supabase
+            // Convert file to Base64 immediately for preview and backend
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                if (typeof reader.result === 'string') {
+                    setSelectedImage(reader.result);
+                }
+            };
+            reader.readAsDataURL(file);
         }
     };
 
     return (
-        <StepLayout currentStep={4} totalSteps={7} title={t.photoQuestion}>
+        <StepLayout currentStep={4} totalSteps={TOTAL_STEPS} title={t.photoQuestion}>
             {/* Main Interaction Area */}
             <div className="flex-1 flex flex-col items-center w-full min-h-[300px]">
                 {selectedImage ? (

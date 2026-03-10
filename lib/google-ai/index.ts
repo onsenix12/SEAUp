@@ -7,28 +7,39 @@ const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY || ""
 const genAI = new GoogleGenerativeAI(apiKey);
 
 // ==========================================
-// 1. Gemini 2.0 Flash (Prompt Construction)
+// 1. Gemini 2.0 Flash (Prompt Construction & Story Generation)
 // ==========================================
 export async function buildArtPrompt(
     selections: CreationFlowState
-): Promise<ApiResponse<string>> {
+): Promise<ApiResponse<{ prompt: string; creation_story: string }>> {
     try {
         const model = genAI.getGenerativeModel({
             model: "gemini-2.5-flash",
-            systemInstruction: "You are an expert creative director. Your job is to take the user's simple visual choices and construct a highly detailed, evocative prompt for an image generation model. The output must be English ONLY and focus on visual aesthetics. Do NOT provide any conversational text, just the literal string of the prompt. The artwork should be an abstract or illustrative piece suitable for commercial licensing.",
+            systemInstruction: "You are an expert creative director and curator. Your job is twofold: 1) Take the user's simple visual choices and construct a highly detailed, evocative prompt for an image generation model (English ONLY, focus on visual aesthetics). 2) Write a short, poetic, 1-sentence 'creation story' (max 10 words) that sounds like an artist explaining their piece based on their choices and actions. Do not mention UI buttons. Return ONLY a valid JSON object in the exact format: {\"prompt\": \"your detailed prompt here\", \"creation_story\": \"your short story here\"}",
             generationConfig: {
                 temperature: 0.7,
-                maxOutputTokens: 250,
+                maxOutputTokens: 1500,
+                responseMimeType: "application/json",
             }
         });
 
         const promptParts: Part[] = [];
 
-        let userPrompt = "Create an image generation prompt with the following elements:\n";
+        let userPrompt = "Create the JSON response based on the following creative choices and actions:\n";
         if (selections.subject) userPrompt += `- Subject: ${selections.subject}\n`;
         if (selections.mood) userPrompt += `- Mood: ${selections.mood}\n`;
         if (selections.colour_palette) userPrompt += `- Color Palette: ${selections.colour_palette}\n`;
         if (selections.style) userPrompt += `- Art Style: ${selections.style}\n`;
+
+        // Add canvas actions for the story context
+        const actions: string[] = [];
+        if (selections.has_drawn) actions.push("drew on the canvas with a brush");
+        if (selections.photo_taken) actions.push("used a photo as inspiration");
+        if (selections.stickers_used && selections.stickers_used > 0) actions.push(`added ${selections.stickers_used} sticker${selections.stickers_used > 1 ? 's' : ''}`);
+
+        if (actions.length > 0) {
+            userPrompt += `- User Actions: The creator ${actions.join(", ")}.\n`;
+        }
 
         promptParts.push({ text: userPrompt });
 
@@ -54,12 +65,32 @@ export async function buildArtPrompt(
         }
 
         const result = await model.generateContent(promptParts);
-        const generatedPrompt = result.response.text().trim();
+        const responseText = result.response.text().trim();
 
-        return {
-            success: true,
-            data: generatedPrompt,
-        };
+        try {
+            const parsed = JSON.parse(responseText);
+            if (!parsed.prompt || !parsed.creation_story) {
+                throw new Error("Missing required fields in Gemini JSON response.");
+            }
+            return {
+                success: true,
+                data: {
+                    prompt: parsed.prompt,
+                    creation_story: parsed.creation_story
+                },
+            };
+        } catch (jsonError) {
+            console.error("Failed to parse Gemini JSON:", responseText, jsonError);
+            // Fallback if structured generation fails
+            return {
+                success: true,
+                data: {
+                    prompt: responseText, // Might be raw text if json failed
+                    creation_story: "Created through visual choices."
+                }
+            }
+        }
+
     } catch (error) {
         console.error("Gemini Error:", error);
         return {

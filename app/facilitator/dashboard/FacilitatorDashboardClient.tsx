@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useFacilitator } from "@/contexts/FacilitatorContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PendingArtworkCard } from "@/components/ui/PendingArtworkCard";
+import { ApprovalModal } from "@/components/ui/ApprovalModal";
 
 interface PendingArtwork {
     id: string;
@@ -21,16 +22,17 @@ interface PendingArtwork {
     };
 }
 
-export default function FacilitatorDashboardClient({ initialArtworks }: { initialArtworks: PendingArtwork[] }) {
+export default function FacilitatorDashboardClient({ initialArtworks, isAdminBypass = false }: { initialArtworks: PendingArtwork[], isAdminBypass?: boolean }) {
     const { sessionData, endSession } = useFacilitator();
     const { language } = useLanguage();
     const router = useRouter();
 
     const [artworks, setArtworks] = useState<PendingArtwork[]>(initialArtworks);
     const [isUpdating, setIsUpdating] = useState<string | null>(null);
+    const [approvingArtwork, setApprovingArtwork] = useState<PendingArtwork | null>(null);
 
     // Basic protection (in a real app, use middleware)
-    if (!sessionData.isActive) {
+    if (!sessionData.isActive && !isAdminBypass) {
         return (
             <div className="min-h-screen flex items-center justify-center p-6 text-center">
                 <div>
@@ -43,13 +45,19 @@ export default function FacilitatorDashboardClient({ initialArtworks }: { initia
         );
     }
 
-    const handleAction = async (artworkId: string, action: 'approved' | 'rejected') => {
+    const handleAction = async (artworkId: string, action: 'approved' | 'rejected', metadata?: any) => {
+        if (action === 'approved' && !metadata) {
+            const artwork = artworks.find(a => a.id === artworkId);
+            if (artwork) setApprovingArtwork(artwork);
+            return;
+        }
+
         setIsUpdating(artworkId);
         try {
             const response = await fetch('/api/facilitator/review', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ artworkId, status: action })
+                body: JSON.stringify({ artworkId, status: action, ...metadata })
             });
 
             const data = await response.json();
@@ -57,6 +65,7 @@ export default function FacilitatorDashboardClient({ initialArtworks }: { initia
             if (data.success) {
                 // Remove out of queue locally
                 setArtworks(prev => prev.filter(a => a.id !== artworkId));
+                setApprovingArtwork(null);
             } else {
                 alert("Failed to update status: " + data.error);
             }
@@ -69,7 +78,9 @@ export default function FacilitatorDashboardClient({ initialArtworks }: { initia
     };
 
     const handleLogout = () => {
-        endSession();
+        if (!isAdminBypass) {
+            endSession();
+        }
         router.push("/");
     };
 
@@ -79,7 +90,7 @@ export default function FacilitatorDashboardClient({ initialArtworks }: { initia
                 <div>
                     <h1 className="font-creator text-3xl font-bold">Organizer Queue</h1>
                     <p className="font-body text-muted mt-1">
-                        Logged in: <span className="font-bold text-ink">{sessionData.organisation} Facilitator</span>
+                        Logged in: <span className="font-bold text-ink">{isAdminBypass ? "Admin (Bypass Mode)" : `${sessionData.organisation} Facilitator`}</span>
                     </p>
                 </div>
                 <button onClick={handleLogout} className="text-sm font-bold text-signal px-4 py-2 border-2 border-signal rounded-creator hover:bg-signal/10 transition-colors">
@@ -118,6 +129,16 @@ export default function FacilitatorDashboardClient({ initialArtworks }: { initia
                     </div>
                 )}
             </main>
+
+            {approvingArtwork && (
+                <ApprovalModal
+                    artwork={approvingArtwork}
+                    onClose={() => setApprovingArtwork(null)}
+                    onSubmit={async (id, metadata) => {
+                        await handleAction(id, 'approved', metadata);
+                    }}
+                />
+            )}
         </div>
     );
 }

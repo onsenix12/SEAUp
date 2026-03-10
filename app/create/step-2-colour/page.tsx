@@ -7,27 +7,7 @@ import { useRouter } from "next/navigation";
 import { StepLayout } from "@/components/ui/StepLayout";
 import { OptionCard } from "@/components/ui/OptionCard";
 
-// Base colour palette choices matching brand-guidelines.md
-const PALETTES = [
-    {
-        id: "warm",
-        label_en: "Warm Sunrise",
-        label_id: "Matahari Terbit",
-        colors: ["bg-joy", "bg-warmth", "bg-signal"]
-    },
-    {
-        id: "cool",
-        label_en: "Cool Ocean",
-        label_id: "Lautan Tenang",
-        colors: ["bg-calm", "bg-wonder", "bg-canvas"]
-    },
-    {
-        id: "earth",
-        label_en: "Earth & Nature",
-        label_id: "Bumi & Alam",
-        colors: ["bg-nature", "bg-ink", "bg-canvas"]
-    },
-];
+import { PALETTES, TOTAL_STEPS } from "@/lib/constants/creation";
 
 export default function Step2Colour() {
     const { language } = useLanguage();
@@ -41,7 +21,7 @@ export default function Step2Colour() {
     };
 
     return (
-        <StepLayout currentStep={2} totalSteps={7} title={t.colourQuestion}>
+        <StepLayout currentStep={2} totalSteps={TOTAL_STEPS} title={t.colourQuestion}>
             {/* 3 Choices - Colour Swatches */}
             <div className="flex flex-col gap-4 w-full">
                 {PALETTES.map((palette) => (

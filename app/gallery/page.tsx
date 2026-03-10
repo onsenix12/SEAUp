@@ -11,7 +11,7 @@ export default async function GalleryPage() {
     // In production, we'd paginate or filter by public status.
     const { data: artworks, error } = await supabase
         .from('artworks')
-        .select('*')
+        .select('*, creators (name)')
         .order('created_at', { ascending: false });
 
     if (error) {

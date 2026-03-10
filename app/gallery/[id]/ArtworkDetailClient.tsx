@@ -4,6 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Artwork } from "@/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useCreationFlow } from "@/contexts/CreationFlowContext";
 
 interface ArtworkDetailProps {
     artwork: Artwork & { creators: { name?: string, organisation: string } };
@@ -12,9 +13,11 @@ interface ArtworkDetailProps {
 export default function ArtworkDetailClient({ artwork }: ArtworkDetailProps) {
     const { language } = useLanguage();
     const router = useRouter();
+    const { state } = useCreationFlow();
     const [isSaving, setIsSaving] = useState(false);
     const [savingAction, setSavingAction] = useState<string | null>(null);
 
+    const isOwner = state.nickname === artwork.creators?.name;
     const isSentToOrganizer = artwork.marketplace_status === 'pending_review' || artwork.marketplace_status === 'approved' || artwork.marketplace_status === 'rejected';
 
     const handleAction = async (decision: 'printed' | 'pending_review') => {
@@ -60,7 +63,36 @@ export default function ArtworkDetailClient({ artwork }: ArtworkDetailProps) {
         share: language === 'en' ? 'Share Artwork' : 'Bagikan Karya',
         create: language === 'en' ? 'Create Your Own' : 'Buat Karyamu Sendiri',
         by: language === 'en' ? 'Created by' : 'Dibuat oleh',
-        unknown: language === 'en' ? 'Creator at' : 'Kreator di'
+        unknown: language === 'en' ? 'Creator at' : 'Kreator di',
+        delete: language === 'en' ? 'Delete Artwork' : 'Hapus Karya',
+        confirmDelete: language === 'en' ? 'Are you sure you want to delete this artwork?' : 'Apakan Anda yakin ingin menghapus karya ini?',
+        storyTitle: language === 'en' ? 'The Story' : 'Ceritanya',
+    };
+
+    const handleDelete = async () => {
+        if (!confirm(t.confirmDelete)) return;
+
+        setIsSaving(true);
+        try {
+            const response = await fetch('/api/delete-artwork', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: artwork.id })
+            });
+            const data = await response.json();
+
+            if (!data.success) {
+                alert(language === 'en' ? `Failed to delete: ${data.error}` : `Gagal menghapus: ${data.error}`);
+                setIsSaving(false);
+                return;
+            }
+
+            router.push('/gallery');
+        } catch (error) {
+            console.error("Error deleting:", error);
+            alert(language === 'en' ? "An error occurred." : "Terjadi kesalahan.");
+            setIsSaving(false);
+        }
     };
 
     const handleShare = async () => {
@@ -92,7 +124,7 @@ export default function ArtworkDetailClient({ artwork }: ArtworkDetailProps) {
         <div className="flex-1 flex flex-col w-full h-full max-w-md mx-auto relative pt-4 pb-8">
 
             {/* Header Navigation */}
-            <div className="flex items-center mb-6 pl-2">
+            <div className="flex items-center justify-between mb-6 px-2">
                 <button
                     onClick={() => router.push('/gallery')}
                     className="p-2 -ml-2 text-ink active:scale-95 transition-transform flex items-center gap-2"
@@ -102,6 +134,16 @@ export default function ArtworkDetailClient({ artwork }: ArtworkDetailProps) {
                     </svg>
                     <span className="font-creator font-bold text-lg">{t.back}</span>
                 </button>
+
+                {isOwner && (
+                    <button
+                        onClick={handleDelete}
+                        disabled={isSaving}
+                        className="text-red-500 font-body text-sm font-bold active:scale-95 transition-transform disabled:opacity-50"
+                    >
+                        {t.delete}
+                    </button>
+                )}
             </div>
 
             {/* Artwork Display Area with Attribution Overlay */}
@@ -123,6 +165,18 @@ export default function ArtworkDetailClient({ artwork }: ArtworkDetailProps) {
                     </p>
                 </div>
             </div>
+
+            {/* Story Display */}
+            {artwork.creation_story && (
+                <div className="bg-surface border border-border rounded-creator p-5 mb-8 w-full shadow-sm">
+                    <h3 className="font-creator font-bold text-ink mb-2">
+                        {t.storyTitle}
+                    </h3>
+                    <p className="font-body text-ink/80 text-sm leading-relaxed">
+                        {artwork.creation_story}
+                    </p>
+                </div>
+            )}
 
             {/* Actions */}
             <div className="flex flex-col gap-4 w-full mt-auto">

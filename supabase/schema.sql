@@ -26,6 +26,11 @@ CREATE TABLE artworks (
     creator_id UUID NOT NULL REFERENCES creators(id) ON DELETE CASCADE,
     image_url TEXT NOT NULL,
     prompt_used TEXT NOT NULL, -- internal
+    title TEXT,
+    price NUMERIC,
+    creator_age INTEGER,
+    creator_location TEXT,
+    creation_story TEXT,
     mood TEXT NOT NULL,
     colour_palette TEXT NOT NULL,
     subject TEXT NOT NULL,
@@ -34,6 +39,7 @@ CREATE TABLE artworks (
     moderation_pass BOOLEAN NOT NULL DEFAULT true,
     session_notes TEXT,
     is_public BOOLEAN NOT NULL DEFAULT false,
+    marketplace_status TEXT,
     ip_owner TEXT NOT NULL DEFAULT 'creator', -- Product strict requirement
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

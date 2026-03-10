@@ -4,7 +4,7 @@ import { createSupabaseServiceClient } from "@/lib/supabase";
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { artworkId, status } = body;
+        const { artworkId, status, title, description, price, creator_age, creator_location } = body;
 
         if (!artworkId || !status || !['approved', 'rejected'].includes(status)) {
             return NextResponse.json({ success: false, error: "Invalid payload" }, { status: 400 });
@@ -12,15 +12,24 @@ export async function POST(request: Request) {
 
         const supabase = await createSupabaseServiceClient();
 
-        // If approved, it is public in the marketplace. If rejected, it remains private.
         const isPublic = status === 'approved';
+
+        const updateData: any = {
+            marketplace_status: status,
+            is_public: isPublic
+        };
+
+        if (isPublic) {
+            updateData.title = title;
+            updateData.description = description;
+            updateData.price = price;
+            updateData.creator_age = creator_age;
+            updateData.creator_location = creator_location;
+        }
 
         const { error } = await supabase
             .from('artworks')
-            .update({
-                marketplace_status: status,
-                is_public: isPublic
-            })
+            .update(updateData)
             .eq('id', artworkId);
 
         if (error) {

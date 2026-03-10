@@ -86,3 +86,80 @@ body {
   backdrop-filter: blur(20px) saturate(1.8);
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
+
+/* Glass Vivid — signal yellow accent on top edge, warmer tint */
+.glass-card-vivid {
+  background: rgba(244, 243, 239, 0.78);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-top: 2px solid rgba(245, 200, 0, 0.55);
+  box-shadow:
+    0 8px 32px rgba(28, 28, 26, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+/* Animated ASEAN colour ambient — joy coral, calm blue, wonder violet */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.bg-gradient-art {
+  background: linear-gradient(135deg,
+      rgba(255, 107, 53, 0.18) 0%,
+      rgba(74, 144, 217, 0.14) 33%,
+      rgba(123, 94, 167, 0.16) 66%,
+      rgba(247, 163, 75, 0.12) 100%);
+  background-size: 300% 300%;
+  animation: gradient-shift 12s ease infinite;
+}
+
+/* Fade-up entrance for scroll reveals */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s ease-out forwards;
+}
+
+/* Hide scrollbar utility */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Typewriter cursor blink — used in marketplace quote animation */
+@keyframes blink-cursor {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}

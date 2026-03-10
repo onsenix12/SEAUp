@@ -3,6 +3,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCreationFlow } from "@/contexts/CreationFlowContext";
 import { COPY } from "@/lib/i18n/copy";
+import { TOTAL_STEPS } from "@/lib/constants/creation";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
@@ -28,8 +29,9 @@ export default function Step6Generating() {
                 const result = await response.json();
 
                 if (result.success && isMounted) {
-                    // Temporary: Save url to state so Step 8 can read it
-                    sessionStorage.setItem("generated_artwork_url", result.data);
+                    // Save both url and story to state so Step 8 and the DB can read it
+                    sessionStorage.setItem("generated_artwork_url", result.data.imageUrl);
+                    sessionStorage.setItem("generated_creation_story", result.data.creationStory);
                     router.push("/create/step-8-result");
                 } else if (!result.success && isMounted) {
                     console.error("Generation failed:", result.error);
@@ -53,7 +55,7 @@ export default function Step6Generating() {
             {/* Step Counter */}
             <div className="absolute top-0 right-0">
                 <span className="font-mono text-xs text-muted tracking-widest">
-                    07 / 07
+                    {TOTAL_STEPS.toString().padStart(2, '0')} / {TOTAL_STEPS.toString().padStart(2, '0')}
                 </span>
             </div>
 
