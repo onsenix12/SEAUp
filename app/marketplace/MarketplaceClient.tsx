@@ -109,7 +109,7 @@ export default function MarketplaceClient({ artworks }: { artworks: Artwork[] })
                             <StepDot color="#7B5EA7" />
                             <Connector />
                             {/* Result — thumbnail */}
-                            <div className="w-16 h-16 rounded-[4px] border border-white/20 bg-muted flex items-center justify-center overflow-hidden">
+                            <div className="relative w-16 h-16 rounded-[4px] border border-white/20 bg-muted flex items-center justify-center overflow-hidden">
                                 {featured && featured.image_url && (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <NextImage src={featured.image_url} alt="Result" fill className="object-cover" />
