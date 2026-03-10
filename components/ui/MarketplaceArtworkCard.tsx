@@ -61,8 +61,8 @@ export function MarketplaceArtworkCard({
                         )}
                     </div>
 
-                    {/* Dark Glass Reveal — fixed at bottom, always visible */}
-                    <div className="absolute bottom-0 left-0 w-full h-[45%] md:h-[40%] z-10 p-4 md:p-6 flex flex-col justify-end">
+                    {/* Dark Glass Reveal on Hover — fixed blur, slide up animation */}
+                    <div className="absolute bottom-0 left-0 w-full h-[45%] md:h-[40%] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out z-10 p-4 md:p-6 flex flex-col justify-end">
                         <div className="absolute inset-0 bg-ink/55 backdrop-blur-xl -z-10 border-t border-signal/40" />
                         <p className="font-body text-xs md:text-sm text-canvas/80 mb-1">
                             {artwork.creator_age || '??'} yrs · {artwork.creator_location || 'Unknown'}
