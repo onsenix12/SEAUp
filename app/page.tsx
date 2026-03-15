@@ -46,7 +46,7 @@ export default function OnboardingScreen() {
         <div className="flex flex-col gap-4 w-full">
           <button
             onClick={handleStart}
-            className="bg-signal text-ink font-creator font-bold text-2xl tracking-wide w-full min-h-[80px] rounded-creator hover:bg-signal/90 active:scale-[0.96] transition-all duration-150 touch-manipulation shadow-sm flex items-center justify-center gap-3"
+            className="bg-surface text-ink font-creator font-bold text-2xl tracking-wide w-full min-h-[80px] rounded-creator border-2 border-border hover:bg-signal active:scale-[0.96] transition-all duration-150 touch-manipulation flex items-center justify-center gap-3"
           >
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -58,25 +58,14 @@ export default function OnboardingScreen() {
 
           <button
             onClick={() => router.push('/create/music')}
-            className="bg-surface text-ink font-creator font-bold text-xl tracking-wide w-full min-h-[72px] rounded-creator active:scale-[0.96] transition-all duration-150 touch-manipulation border-2 border-border flex items-center justify-center gap-3"
+            className="bg-surface text-ink font-creator font-bold text-2xl tracking-wide w-full min-h-[80px] rounded-creator border-2 border-border hover:bg-signal active:scale-[0.96] transition-all duration-150 touch-manipulation flex items-center justify-center gap-3"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 18V5l12-2v13"></path>
               <circle cx="6" cy="18" r="3"></circle>
               <circle cx="18" cy="16" r="3"></circle>
             </svg>
             {language === 'en' ? 'Make Music' : 'Buat Musik'}
-          </button>
-
-          <button
-            onClick={() => router.push('/create/video')}
-            className="bg-surface text-ink font-creator font-bold text-xl tracking-wide w-full min-h-[72px] rounded-creator active:scale-[0.96] transition-all duration-150 touch-manipulation border-2 border-border flex items-center justify-center gap-3"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="23 7 16 12 23 17 23 7"></polygon>
-              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-            </svg>
-            {language === 'en' ? 'Make a Video' : 'Buat Video'}
           </button>
         </div>
 

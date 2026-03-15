@@ -55,6 +55,25 @@ CREATE TABLE sessions (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- 5. Music Tracks Table
+CREATE TABLE music_tracks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    creator_id UUID NOT NULL REFERENCES creators(id) ON DELETE CASCADE,
+    audio_url TEXT NOT NULL,
+    cover_image_url TEXT,
+    title TEXT,
+    creation_mode TEXT NOT NULL DEFAULT 'from_scratch',
+    source_artwork_id UUID REFERENCES artworks(id) ON DELETE SET NULL,
+    music_prompt TEXT NOT NULL,
+    sound_effects TEXT[],
+    has_recorded_audio BOOLEAN NOT NULL DEFAULT false,
+    creation_story TEXT,
+    is_public BOOLEAN NOT NULL DEFAULT false,
+    marketplace_status TEXT DEFAULT 'private',
+    ip_owner TEXT NOT NULL DEFAULT 'creator',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Optional: Enable Row Level Security (RLS)
 -- ALTER TABLE facilitators ENABLE ROW LEVEL SECURITY;
 -- ALTER TABLE creators ENABLE ROW LEVEL SECURITY;

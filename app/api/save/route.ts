@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServiceClient } from "@/lib/supabase";
 import { CreationFlowState } from "@/types";
+import { deriveImageSkills, skillsToStorageString } from "@/lib/learning/skills";
 
 interface FacilitatorPayload {
     facilitatorId: string;
@@ -100,6 +101,9 @@ export async function POST(request: Request) {
         const cdnUrl = publicUrlData.publicUrl;
 
         // 5. Insert the artwork record into the database
+        const skills = deriveImageSkills(body.state ?? {});
+        const learningTagsString = skillsToStorageString(skills);
+
         const { error: artworkError } = await supabase
             .from('artworks')
             .insert({
@@ -116,7 +120,8 @@ export async function POST(request: Request) {
                 session_notes: validFd?.sessionNotes || null,
                 is_public: validFd ? validFd.isPublic : false, // Still private internally until officially 'approved' for shop
                 marketplace_status: body.marketplaceStatus || 'private',
-                ip_owner: 'creator' // Strict requirement
+                ip_owner: 'creator', // Strict requirement
+                learning_tags: learningTagsString
             });
 
         if (artworkError) {

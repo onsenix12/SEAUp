@@ -163,3 +163,21 @@ body {
     opacity: 0;
   }
 }
+
+/* Music waveform bar animation — used in /create/music/generating */
+@keyframes musicBar {
+  0% {
+    transform: scaleY(0.3);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+.music-bar-anim {
+  animation: musicBar 0.8s ease-in-out infinite alternate;
+  transform-origin: bottom;
+}

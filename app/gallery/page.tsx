@@ -1,24 +1,38 @@
 import { createSupabaseServerClient } from "@/lib/supabase";
 import GalleryClient from "./GalleryClient";
-import { Artwork } from "@/types";
+import { Artwork, MusicTrack } from "@/types";
 
 export const revalidate = 0; // Disable caching for MVP so we see new artworks immediately
 
 export default async function GalleryPage() {
     const supabase = await createSupabaseServerClient();
 
-    // Fetch artworks. For MVP, we'll just fetch all of them, ordered by newest.
-    // In production, we'd paginate or filter by public status.
-    const { data: artworks, error } = await supabase
+    // Fetch artworks
+    const { data: artworks, error: artworkError } = await supabase
         .from('artworks')
         .select('*, creators (name)')
         .order('created_at', { ascending: false });
 
-    if (error) {
-        console.error("Error fetching gallery:", error);
+    if (artworkError) {
+        console.error("Error fetching gallery:", artworkError);
+    }
+
+    // Fetch music tracks
+    const { data: musicTracks, error: musicError } = await supabase
+        .from('music_tracks')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (musicError) {
+        // Non-fatal — table might not exist yet if migration hasn't been run
+        console.warn("Music tracks fetch failed (run schema migration?):", musicError.message);
     }
 
     return (
-        <GalleryClient initialArtworks={artworks as Artwork[] || []} />
+        <GalleryClient
+            initialArtworks={artworks as Artwork[] || []}
+            initialMusicTracks={musicTracks as MusicTrack[] || []}
+        />
     );
 }
+

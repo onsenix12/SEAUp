@@ -52,6 +52,7 @@ export interface Artwork {
     is_public: boolean;
     marketplace_status?: 'private' | 'pending_review' | 'approved' | 'rejected';
     ip_owner: string; // strictly 'creator'
+    learning_tags?: string;
     creators?: {
         name: string | null;
         organisation?: string;
@@ -66,6 +67,7 @@ export interface Session {
     artworks_created: number;
     duration_minutes: number;
     notes?: string;
+    learning_domains?: string;
     created_at: string;
 }
 
@@ -91,4 +93,40 @@ export interface CreationFlowState {
 export interface CreateArtworkRequest {
     creatorId: string; // ID of the creator context
     selections: CreationFlowState;
+}
+
+// ==========================================
+// 4. Music Flow State (Frontend)
+// ==========================================
+export interface MusicFlowState {
+    mode?: 'from_artwork' | 'from_scratch';
+    sourceArtworkId?: string;
+    sourceArtworkStory?: string;   // creation_story from the source artwork
+    sourceArtworkImageUrl?: string;
+    soundEffects?: string[];        // selected sound effect categories
+    hasRecordedAudio?: boolean;
+    recordedAudioBase64?: string;   // microphone recording
+    nickname?: string;
+}
+
+// ==========================================
+// 5. Music Track DB Interface
+// ==========================================
+export interface MusicTrack {
+    id: string;
+    creator_id: string;
+    audio_url: string;
+    cover_image_url?: string;
+    title?: string;
+    creation_mode: 'from_artwork' | 'from_scratch';
+    source_artwork_id?: string;
+    music_prompt: string;
+    sound_effects?: string[];
+    has_recorded_audio: boolean;
+    creation_story?: string;
+    is_public: boolean;
+    marketplace_status?: 'private' | 'pending_review' | 'approved';
+    ip_owner: string;
+    learning_tags?: string;
+    created_at: string;
 }

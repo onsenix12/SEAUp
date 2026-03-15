@@ -2,13 +2,19 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCreationFlow } from "@/contexts/CreationFlowContext";
+import { useFacilitator } from "@/contexts/FacilitatorContext";
 import { COPY } from "@/lib/i18n/copy";
+import { deriveImageSkills } from "@/lib/learning/skills";
+import SkillsCard from "@/components/learning/SkillsCard";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function Step9Print() {
     const { language } = useLanguage();
+    const { state } = useCreationFlow();
+    const { sessionData } = useFacilitator();
+    const skills = deriveImageSkills(state);
     const router = useRouter();
     const t = COPY[language];
 
@@ -85,6 +91,12 @@ export default function Step9Print() {
                     {language === 'en' ? 'In the full version of SEA-Up, you will be able to order these physical products directly.' : 'Dalam versi lengkap SEA-Up, Anda dapat memesan produk fisik ini secara langsung.'}
                 </p>
             </div>
+
+            <SkillsCard
+                skills={skills}
+                language={language}
+                creatorName={sessionData.isActive ? sessionData.creatorName : undefined}
+            />
 
             {/* Actions */}
             <div className="flex flex-col gap-4 w-full mt-auto">

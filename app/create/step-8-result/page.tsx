@@ -4,6 +4,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useCreationFlow } from "@/contexts/CreationFlowContext";
 import { useFacilitator } from "@/contexts/FacilitatorContext";
 import { COPY } from "@/lib/i18n/copy";
+import { deriveImageSkills } from "@/lib/learning/skills";
+import SkillsCard from "@/components/learning/SkillsCard";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
@@ -23,6 +25,7 @@ export default function Step8Decision() {
     };
 
     const artworkUrl = getCachedArtwork();
+    const skills = deriveImageSkills(state);
     const [isSaving, setIsSaving] = useState(false);
     const [choice, setChoice] = useState<'print' | 'shop' | 'save' | null>(null);
 
@@ -140,7 +143,7 @@ export default function Step8Decision() {
             </div>
 
             {/* Artwork Display Area */}
-            <div className="w-full aspect-square rounded-creator overflow-hidden border-2 border-border shadow-md bg-canvas mb-8 relative">
+            <div className="w-full aspect-square rounded-creator overflow-hidden border-2 border-border shadow-md bg-canvas mb-4 relative">
                 <Image
                     src={artworkUrl}
                     alt="Generated Artwork"
@@ -149,6 +152,12 @@ export default function Step8Decision() {
                     priority
                 />
             </div>
+
+            <SkillsCard
+                skills={skills}
+                language={language}
+                creatorName={sessionData.isActive ? sessionData.creatorName : undefined}
+            />
 
             {/* The Decision Layer */}
             <div className="flex flex-col gap-4 w-full mt-auto">
