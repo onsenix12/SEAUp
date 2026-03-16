@@ -13,7 +13,7 @@ import { useFacilitatorPrompt } from '@/hooks/useFacilitatorPrompt';
 
 export default function MusicResult() {
     const { language } = useLanguage();
-    const { state, resetState } = useMusicFlow();
+    const { state, resetState, musicResult } = useMusicFlow();
     const { sessionData } = useFacilitator();
     const skills = deriveMusicSkills(state.soundEffects ?? [], state.hasRecordedAudio ?? false);
     const router = useRouter();
@@ -51,29 +51,28 @@ export default function MusicResult() {
     };
 
     useEffect(() => {
-        const audio = sessionStorage.getItem('generated_music_audio');
-        const cover = sessionStorage.getItem('generated_music_cover');
-        const story = sessionStorage.getItem('generated_music_story') || '';
-        const savedMusicPrompt = sessionStorage.getItem('generated_music_prompt') || '';
-        const lyriaOk = sessionStorage.getItem('lyria_available') !== 'false';
-        const genError = sessionStorage.getItem('music_error');
-        const lyriaErr = sessionStorage.getItem('lyria_error');
+        if (!musicResult) return;
 
-        if (genError) setError(genError);
+        const { audioBase64, coverBase64, creationStory, musicPrompt: mp, lyriaAvailable: lyriaOk, lyriaError } = musicResult;
+
+        // Show error if both audio failed and it's not just a Lyria unavailability
+        if (!lyriaOk && lyriaError && !audioBase64) {
+            setError(lyriaError);
+        }
         setLyriaAvailable(lyriaOk);
-        setStory(story);
-        setMusicPromptText(savedMusicPrompt);
+        setStory(creationStory);
+        setMusicPromptText(mp);
 
-        if (audio) {
-            setAudioSrc(`data:audio/wav;base64,${audio}`);
+        if (audioBase64) {
+            setAudioSrc(`data:audio/wav;base64,${audioBase64}`);
         }
-        if (cover) {
-            setCoverSrc(cover); // already data URI
+        if (coverBase64) {
+            setCoverSrc(coverBase64); // already data URI
         }
-        if (lyriaErr && !lyriaOk) {
-            console.warn("Lyria error:", lyriaErr);
+        if (lyriaError && !lyriaOk) {
+            console.warn("Lyria error:", lyriaError);
         }
-    }, []);
+    }, [musicResult]);
 
     const togglePlay = () => {
         const audio = audioRef.current;
@@ -91,12 +90,10 @@ export default function MusicResult() {
         if (isSaving || saved) return;
         setIsSaving(true);
 
-        const audioBase64 = sessionStorage.getItem('generated_music_audio');
-        const coverBase64 = sessionStorage.getItem('generated_music_cover');
+        const audioBase64 = musicResult?.audioBase64 ?? null;
+        const coverBase64 = musicResult?.coverBase64 ?? null;
 
         if (!audioBase64) {
-            // If no audio (Lyria unavailable), save just the cover as a special entry
-            // or prompt user to try later
             alert(language === 'en'
                 ? "No audio to save yet. Lyria is not enabled."
                 : "Belum ada audio untuk disimpan. Lyria belum diaktifkan.");
@@ -125,9 +122,6 @@ export default function MusicResult() {
                 return;
             }
 
-            // Cleanup sessionStorage
-            ['generated_music_audio', 'generated_music_cover', 'generated_music_story', 'generated_music_prompt', 'lyria_available', 'lyria_error', 'music_error'].forEach(k => sessionStorage.removeItem(k));
-
             setSaved(true);
             setTimeout(() => {
                 resetState();
@@ -141,7 +135,6 @@ export default function MusicResult() {
     };
 
     const handleTryAgain = () => {
-        ['generated_music_audio', 'generated_music_cover', 'generated_music_story', 'generated_music_prompt', 'lyria_available', 'lyria_error', 'music_error'].forEach(k => sessionStorage.removeItem(k));
         resetState();
         router.replace(state.journey === 'sounds' ? '/create/step-1-mood' : '/create/music');
     };

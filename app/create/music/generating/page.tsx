@@ -10,7 +10,7 @@ const BAR_HEIGHTS = [38, 62, 45, 75, 30, 55, 48, 80, 25, 60, 70, 35];
 
 export default function MusicGenerating() {
     const { language } = useLanguage();
-    const { state } = useMusicFlow();
+    const { state, setMusicResult } = useMusicFlow();
     const router = useRouter();
     const hasCalled = useRef(false);
 
@@ -52,30 +52,44 @@ export default function MusicGenerating() {
                 const data = await response.json();
 
                 if (!data.success) {
-                    sessionStorage.setItem('music_error', data.error || 'Generation failed.');
+                    setMusicResult({
+                        audioBase64: null,
+                        coverBase64: null,
+                        creationStory: '',
+                        musicPrompt: '',
+                        lyriaAvailable: false,
+                        lyriaError: data.error || 'Generation failed.',
+                    });
                     router.replace('/create/music/result');
                     return;
                 }
 
                 const { audioBase64, coverBase64, creationStory, musicPrompt, lyriaAvailable, lyriaError } = data.data;
 
-                if (audioBase64) sessionStorage.setItem('generated_music_audio', audioBase64);
-                if (coverBase64) sessionStorage.setItem('generated_music_cover', coverBase64);
-                if (creationStory) sessionStorage.setItem('generated_music_story', creationStory);
-                if (musicPrompt) sessionStorage.setItem('generated_music_prompt', musicPrompt);
-                sessionStorage.setItem('lyria_available', String(lyriaAvailable));
-                if (lyriaError) sessionStorage.setItem('lyria_error', lyriaError);
+                // Store large binary data in context (avoids sessionStorage 5MB quota)
+                setMusicResult({
+                    audioBase64: audioBase64 ?? null,
+                    coverBase64: coverBase64 ?? null,
+                    creationStory: creationStory ?? '',
+                    musicPrompt: musicPrompt ?? '',
+                    lyriaAvailable: !!lyriaAvailable,
+                    lyriaError: lyriaError ?? null,
+                });
 
                 router.replace('/create/music/result');
             } catch (err: unknown) {
                 console.error("Music generation failed:", err);
                 const isAbort = err instanceof Error && err.name === 'AbortError';
-                sessionStorage.setItem(
-                    'music_error',
-                    isAbort
+                setMusicResult({
+                    audioBase64: null,
+                    coverBase64: null,
+                    creationStory: '',
+                    musicPrompt: '',
+                    lyriaAvailable: false,
+                    lyriaError: isAbort
                         ? 'Music generation timed out. The audio model may not be available on this API key.'
-                        : 'Network error during music generation.'
-                );
+                        : 'Network error during music generation.',
+                });
                 router.replace('/create/music/result');
             }
         };
