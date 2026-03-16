@@ -88,7 +88,7 @@ export default function Step5Canvas() {
         )}
         <StepLayout currentStep={5} totalSteps={TOTAL_STEPS} title={canvasPrompt}>
             {/* Main Interaction Area */}
-            <div className="flex-1 flex flex-col items-center w-full max-h-[55vh]">
+            <div className="flex flex-col items-center w-full pb-48">
                 <CanvasEditor
                     backgroundImageBase64={state.photo_base64}
                     shouldExport={shouldExport}
@@ -98,17 +98,17 @@ export default function Step5Canvas() {
                 />
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col gap-4 w-full mt-8">
+            {/* Action Buttons — sticky so they're always reachable */}
+            <div className="fixed bottom-0 left-0 right-0 flex flex-col gap-3 p-4 bg-canvas border-t border-border z-10">
                 <button
                     onClick={handleNext}
-                    className="w-full min-h-[72px] bg-signal text-ink font-creator font-bold text-xl rounded-creator shadow-sm active:scale-[0.98] transition-transform"
+                    className="w-full min-h-[64px] bg-signal text-ink font-creator font-bold text-xl rounded-creator shadow-sm active:scale-[0.98] transition-transform"
                 >
                     {language === 'en' ? 'Done drawing' : 'Selesai menggambar'}
                 </button>
                 <button
                     onClick={handleSkip}
-                    className="w-full min-h-[72px] bg-surface text-ink font-creator font-bold text-xl rounded-creator border-2 border-border shadow-sm active:scale-[0.98] transition-transform"
+                    className="w-full min-h-[64px] bg-surface text-ink font-creator font-bold text-xl rounded-creator border-2 border-border shadow-sm active:scale-[0.98] transition-transform"
                 >
                     {language === 'en' ? 'Skip for now' : 'Lewati dulu'}
                 </button>

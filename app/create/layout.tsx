@@ -17,7 +17,7 @@ export default function CreateLayout({
 }) {
     return (
         <MusicFlowProvider>
-            <div className={`${mono.variable} min-h-screen bg-canvas flex flex-col relative`}>
+            <div className={`${mono.variable} min-h-screen bg-canvas flex flex-col relative overflow-y-auto`}>
                 {/* Nothing dot grid texture background */}
                 <div className="absolute inset-0 bg-dot-grid pointer-events-none z-0" />
 
