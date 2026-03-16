@@ -30,8 +30,8 @@ export default async function GalleryPage() {
 
     return (
         <GalleryClient
-            initialArtworks={artworks as Artwork[] || []}
-            initialMusicTracks={musicTracks as MusicTrack[] || []}
+            initialArtworks={(artworks ?? []) as unknown as Artwork[]}
+            initialMusicTracks={(musicTracks ?? []) as unknown as MusicTrack[]}
         />
     );
 }
