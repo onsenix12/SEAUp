@@ -102,12 +102,27 @@ export default function MusicResult() {
         }
 
         try {
+            // 1. Get a signed upload URL and upload audio directly to Supabase
+            //    (avoids Vercel's 4.5MB serverless body limit)
+            const urlRes = await fetch('/api/music-upload-url');
+            const urlData = await urlRes.json();
+            if (!urlData.success) throw new Error(urlData.error || 'Failed to get upload URL');
+
+            const audioBytes = Uint8Array.from(atob(audioBase64), c => c.charCodeAt(0));
+            const uploadRes = await fetch(urlData.signedUrl, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'audio/wav' },
+                body: audioBytes,
+            });
+            if (!uploadRes.ok) throw new Error(`Audio upload failed: ${uploadRes.status}`);
+
+            // 2. Save metadata (no audio blob in body)
             const response = await fetch('/api/save-music', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     state,
-                    audioBase64,
+                    audioStoragePath: urlData.path,
                     coverBase64: coverBase64 || null,
                     creationStory: story,
                     musicPrompt: musicPromptText,

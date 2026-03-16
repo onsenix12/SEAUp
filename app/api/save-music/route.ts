@@ -5,7 +5,7 @@ import { deriveMusicSkills, skillsToStorageString } from "@/lib/learning/skills"
 
 interface SaveMusicRequest {
     state: MusicFlowState;
-    audioBase64: string;         // base64 WAV (no data URI prefix)
+    audioStoragePath: string;    // path in Supabase 'music' bucket (uploaded directly by client)
     coverBase64?: string;        // base64 image (data URI format)
     creationStory: string;
     musicPrompt: string;
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     try {
         const body: SaveMusicRequest = await request.json();
 
-        if (!body.audioBase64 || !body.state) {
+        if (!body.audioStoragePath || !body.state) {
             return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 });
         }
 
@@ -46,26 +46,9 @@ export async function POST(request: Request) {
 
         const creatorId = creatorData.id;
 
-        // 2. Upload WAV audio file to Supabase storage
-        const audioBuffer = Buffer.from(body.audioBase64, 'base64');
-        const audioFileName = `${creatorId}_${Date.now()}.wav`;
-
-        const { error: audioStorageError } = await supabase.storage
-            .from('music')
-            .upload(audioFileName, new Uint8Array(audioBuffer).buffer, {
-                contentType: 'audio/wav',
-                upsert: false,
-            });
-
-        if (audioStorageError) {
-            console.error("Audio storage upload failed:", audioStorageError);
-            return NextResponse.json(
-                { success: false, error: `Failed to upload audio: ${audioStorageError.message}` },
-                { status: 500 }
-            );
-        }
-
-        const { data: audioPublicUrl } = supabase.storage.from('music').getPublicUrl(audioFileName);
+        // 2. Audio was uploaded directly from the browser to Supabase Storage —
+        //    just resolve the public URL from the path.
+        const { data: audioPublicUrl } = supabase.storage.from('music').getPublicUrl(body.audioStoragePath);
 
         // 3. Upload cover image (optional)
         let coverCdnUrl: string | null = null;
