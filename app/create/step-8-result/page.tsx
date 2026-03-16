@@ -42,7 +42,7 @@ export default function Step8Decision() {
         resetState();
         sessionStorage.removeItem("generated_artwork_url");
         sessionStorage.removeItem("existing_artwork_id");
-        router.replace("/create/step-1-mood");
+        router.replace("/create/start");
     };
 
     const handleSaveDecision = async (decision: 'printed' | 'pending_review' | 'private') => {

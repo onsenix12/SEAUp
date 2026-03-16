@@ -13,7 +13,7 @@ export default function OnboardingScreen() {
 
   const handleJourneySelect = (journey: Journey) => {
     updateState({ journey });
-    router.push('/create/step-1-mood');
+    router.push('/create/start');
   };
 
   return (
