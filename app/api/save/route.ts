@@ -121,7 +121,8 @@ export async function POST(request: Request) {
                 is_public: validFd ? validFd.isPublic : false, // Still private internally until officially 'approved' for shop
                 marketplace_status: body.marketplaceStatus || 'private',
                 ip_owner: 'creator', // Strict requirement
-                learning_tags: learningTagsString
+                learning_tags: learningTagsString,
+                journey: body.state?.journey ?? 'feelings'
             });
 
         if (artworkError) {

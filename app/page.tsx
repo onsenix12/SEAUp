@@ -1,16 +1,19 @@
 "use client";
 
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCreationFlow } from "@/contexts/CreationFlowContext";
 import { COPY, Language } from "@/lib/i18n/copy";
+import { JOURNEY_META, Journey } from "@/types";
 import { useRouter } from "next/navigation";
 
 export default function OnboardingScreen() {
   const { language, setLanguage } = useLanguage();
+  const { updateState } = useCreationFlow();
   const router = useRouter();
 
-  const handleStart = () => {
-    // Navigates to the nickname step of the Creation Flow
-    router.push("/create/start");
+  const handleJourneySelect = (journey: Journey) => {
+    updateState({ journey });
+    router.push('/create/step-1-mood');
   };
 
   return (
@@ -42,31 +45,28 @@ export default function OnboardingScreen() {
           </div>
         </div>
 
-        {/* Multimodal Entry CTAs */}
-        <div className="flex flex-col gap-4 w-full">
-          <button
-            onClick={handleStart}
-            className="bg-surface text-ink font-creator font-bold text-2xl tracking-wide w-full min-h-[80px] rounded-creator border-2 border-border hover:bg-signal active:scale-[0.96] transition-all duration-150 touch-manipulation flex items-center justify-center gap-3"
-          >
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-              <circle cx="8.5" cy="8.5" r="1.5"></circle>
-              <polyline points="21 15 16 10 5 21"></polyline>
-            </svg>
-            {language === 'en' ? 'Make a Picture' : 'Buat Gambar'}
-          </button>
-
-          <button
-            onClick={() => router.push('/create/music')}
-            className="bg-surface text-ink font-creator font-bold text-2xl tracking-wide w-full min-h-[80px] rounded-creator border-2 border-border hover:bg-signal active:scale-[0.96] transition-all duration-150 touch-manipulation flex items-center justify-center gap-3"
-          >
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 18V5l12-2v13"></path>
-              <circle cx="6" cy="18" r="3"></circle>
-              <circle cx="18" cy="16" r="3"></circle>
-            </svg>
-            {language === 'en' ? 'Make Music' : 'Buat Musik'}
-          </button>
+        {/* Journey Selection */}
+        <div className="flex flex-col gap-3 w-full">
+          <p className="font-creator text-xl font-bold text-ink text-center mb-4">
+            {language === 'id' ? 'Apa yang ingin kamu jelajahi hari ini?' : 'What do you want to explore today?'}
+          </p>
+          {(['feelings', 'world', 'sounds'] as Journey[]).map((j) => (
+            <button
+              key={j}
+              onClick={() => handleJourneySelect(j)}
+              className="bg-surface border border-ink/10 rounded-2xl px-5 py-4 flex items-center gap-4 w-full min-h-[80px] hover:bg-signal hover:border-signal transition-colors"
+            >
+              <span className="text-4xl" aria-hidden="true">{JOURNEY_META[j].emoji}</span>
+              <div className="text-left">
+                <p className="font-creator text-lg font-bold text-ink leading-tight">
+                  {language === 'id' ? JOURNEY_META[j].label_id : JOURNEY_META[j].label_en}
+                </p>
+                <p className="font-body text-sm text-muted">
+                  {language === 'id' ? JOURNEY_META[j].tagline_id : JOURNEY_META[j].tagline_en}
+                </p>
+              </div>
+            </button>
+          ))}
         </div>
 
         {/* Facilitator Mode Access */}

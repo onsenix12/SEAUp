@@ -16,6 +16,7 @@ const initialState: CreationFlowState = {
     has_drawn: false,
     photo_taken: false,
     stickers_used: 0,
+    journey: undefined,
 };
 
 const CreationFlowContext = createContext<CreationFlowContextType | undefined>(undefined);
@@ -39,6 +40,10 @@ export function CreationFlowProvider({ children }: { children: React.ReactNode }
 
     const resetState = () => {
         setState(initialState);
+        if (typeof window !== 'undefined') {
+            sessionStorage.removeItem('generated_creation_story');
+            sessionStorage.removeItem('generated_artwork_url');
+        }
     };
 
     return (

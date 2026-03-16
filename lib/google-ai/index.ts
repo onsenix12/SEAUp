@@ -6,6 +6,12 @@ import "server-only";
 const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY || "";
 const genAI = new GoogleGenerativeAI(apiKey);
 
+const JOURNEY_SYSTEM_PROMPTS: Record<string, string> = {
+    feelings: 'Generate a gallery-grade abstract artwork that visually represents a personal emotional experience. Style: expressive, warm, emotionally resonant — like a visual diary entry. Personal and meaningful.',
+    world: 'Generate a neighbourhood heritage print — a stylised illustration of a familiar local environment. Style: clean and graphic, like a hand-illustrated city guide or travel poster. Include visual references to the landmarks described.',
+    sounds: 'Generate abstract visual cover art for an ambient music track. Style: flowing, rhythmic, abstract. The visual rhythm should mirror the described sound rhythm — fast and chaotic if energetic, slow and sweeping if calm.',
+};
+
 // ==========================================
 // 1. Gemini 2.0 Flash (Prompt Construction & Story Generation)
 // ==========================================
@@ -25,7 +31,8 @@ export async function buildArtPrompt(
 
         const promptParts: Part[] = [];
 
-        let userPrompt = "Create the JSON response based on the following creative choices and actions:\n";
+        const journeyPrefix = JOURNEY_SYSTEM_PROMPTS[selections.journey ?? 'feelings'];
+        let userPrompt = `${journeyPrefix}\n\nCreate the JSON response based on the following creative choices and actions:\n`;
         if (selections.subject) userPrompt += `- Subject: ${selections.subject}\n`;
         if (selections.mood) userPrompt += `- Mood: ${selections.mood}\n`;
         if (selections.colour_palette) userPrompt += `- Color Palette: ${selections.colour_palette}\n`;

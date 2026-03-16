@@ -9,6 +9,8 @@ import SkillsCard from "@/components/learning/SkillsCard";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
+import FacilitatorPromptCard from '@/components/facilitator/FacilitatorPromptCard';
+import { useFacilitatorPrompt } from '@/hooks/useFacilitatorPrompt';
 
 export default function Step8Decision() {
     const { language } = useLanguage();
@@ -25,9 +27,16 @@ export default function Step8Decision() {
     };
 
     const artworkUrl = getCachedArtwork();
+    const creationStory = typeof window !== "undefined"
+        ? sessionStorage.getItem("generated_creation_story") || ""
+        : "";
     const skills = deriveImageSkills(state);
     const [isSaving, setIsSaving] = useState(false);
     const [choice, setChoice] = useState<'print' | 'shop' | 'save' | null>(null);
+
+    const { shouldShow, prompt, language: promptLanguage } = useFacilitatorPrompt('result');
+    const [promptDismissed, setPromptDismissed] = useState(false);
+    const showCard = shouldShow && !promptDismissed;
 
     const handleTryAgain = () => {
         resetState();
@@ -130,6 +139,15 @@ export default function Step8Decision() {
     };
 
     return (
+        <>
+        {showCard && prompt && (
+            <FacilitatorPromptCard
+                prompt={prompt}
+                language={promptLanguage}
+                onContinue={() => setPromptDismissed(true)}
+                stepLabel={promptLanguage === 'id' ? 'Setelah Membuat' : 'After Creation'}
+            />
+        )}
         <div className="flex-1 flex flex-col w-full h-full max-w-md mx-auto relative pt-4 pb-8">
 
             {/* Title */}
@@ -153,6 +171,12 @@ export default function Step8Decision() {
                 />
             </div>
 
+            {creationStory && (
+                <p className="font-body text-sm text-muted italic text-center px-4 mt-2">
+                    {creationStory}
+                </p>
+            )}
+
             <SkillsCard
                 skills={skills}
                 language={language}
@@ -161,6 +185,15 @@ export default function Step8Decision() {
 
             {/* The Decision Layer */}
             <div className="flex flex-col gap-4 w-full mt-auto">
+                {sessionData.isActive && (
+                    <button
+                        onClick={() => handleSaveDecision('pending_review')}
+                        disabled={isSaving}
+                        className="w-full min-h-[80px] bg-ink text-surface font-creator font-bold text-2xl rounded-creator shadow-sm active:scale-[0.98] transition-transform disabled:opacity-70 flex items-center justify-center p-4 hover:bg-ink/90"
+                    >
+                        {choice === 'shop' ? (language === 'en' ? 'Submitting...' : 'Mengirim...') : (language === 'en' ? 'Send to Shop' : 'Kirim ke Toko')}
+                    </button>
+                )}
                 <button
                     onClick={() => handleSaveDecision('private')}
                     disabled={isSaving}
@@ -182,5 +215,6 @@ export default function Step8Decision() {
             </div>
 
         </div>
+        </>
     );
 }

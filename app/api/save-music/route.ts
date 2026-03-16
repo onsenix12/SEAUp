@@ -12,6 +12,7 @@ interface SaveMusicRequest {
     creatorName?: string;
     organisation?: string;
     facilitatorId?: string;
+    journey?: string;
 }
 
 export async function POST(request: Request) {
@@ -111,6 +112,7 @@ export async function POST(request: Request) {
                 marketplace_status: 'private',
                 ip_owner: 'creator',
                 learning_tags: learningTagsString,
+                journey: body.journey ?? body.state?.journey ?? ''
             })
             .select('id')
             .single();

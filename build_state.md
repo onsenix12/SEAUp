@@ -6,7 +6,7 @@
 ---
 
 ## Last Updated
-- Date: 2026-03-15
+- Date: 2026-03-16
 - Session duration: N/A
 - Updated by: Agent
 
@@ -17,7 +17,6 @@
 
 ```
 [ ] 7.8 End-to-end music flow verification (Mobile + Desktop)
-[ ] 8.8 Visual QA — verify SkillsCard renders without overflow at 390px on all three surfaces
 [ ] 8.8 Verify learning_tags populated in Supabase after live artwork + music save
 ```
 
@@ -110,3 +109,19 @@
   - Music save route — `learning_tags` persisted to `music_tracks`.
 - **Architectural decision**: `hasRhythm` in `deriveMusicSkills` maps to `hasRecordedAudio` as MVP approximation. Comment added in `skills.ts` for Phase 2 update when rhythm-tap interaction is added.
 - **QA fix**: SkillsCard added to `step-8-result` (primary result screen) after visual QA revealed it was missing — spec had only listed step-9 screens.
+
+[Session 9 — 2026-03-16]
+- [x] **Mobile audit (390px)**: Audited all creation flow screens, facilitator overlay, marketplace, and canvas step at 390px viewport.
+  - Fixed `min-h-[64px]` → `min-h-[72px]` on Step 2 multi-select chips (sounds journey) to meet 72px tap target minimum.
+  - Fixed `FacilitatorPromptCard` inner card: added `overflow-y-auto max-h-[90dvh]` to prevent clipping on short viewports and iOS address-bar collapse.
+  - Fixed `step-5-canvas`: added `max-h-[55vh]` to canvas wrapper so action buttons remain visible without scrolling.
+  - Fixed `MarketplaceArtworkCard` hover overlay: replaced `md:` breakpoints with `sm:` intermediates; title now steps `text-lg → text-xl → text-2xl` instead of jumping directly at 768px.
+- [x] **Bahasa Indonesia audit**: Verified all new strings across journey cards, step questions, canvas prompts, facilitator prompt card, and SkillsCard. All pass. Identified `FacilitatorSetupClient.tsx` as entirely untranslated — added `t` translation object covering all 9 strings (heading, sign out, logged in as, creator name label/hint/placeholder, organisation, start button, handoff note, clean UI note).
+- [x] **Code review & fixes** (pre-BUILD_STATE update):
+  - `MusicFlowState.journey` retyped from `string` to `Journey` union (`types/index.ts`).
+  - `app/api/save/route.ts`: journey fallback changed from `?? ''` to `?? 'feelings'` to prevent empty-string journey on older saves.
+  - `MarketplaceArtworkCard` hover overlay: `price || 0` → `(price ?? 0) > 0 ? ... : 'Price on request'` — eliminates `$0 SGD` display.
+  - `step-2-colour`: `useEffect` on `state.colour_palette` resets local `selected[]` when flow resets — was not cleared by `resetState()`.
+  - `CreationFlowContext.resetState()`: now also clears `sessionStorage` keys `generated_creation_story` and `generated_artwork_url` — previously scattered across component handlers.
+  - Removed `as any` casts: `PendingArtwork` exported from `FacilitatorDashboardClient` and imported in admin page; `Artwork` imported in marketplace page.
+- [x] **Documentation consolidation**: `problem.md`, `solution.md`, `kickoff_prompt.md` absorbed into `README.md` and deleted. `decisions.md` updated with DEC-007 through DEC-012 (Lyria 2, Journey union, dynamic options, sessionStorage pattern, learning tags schema, facilitator prompts in content).

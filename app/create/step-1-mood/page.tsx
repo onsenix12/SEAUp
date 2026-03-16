@@ -1,19 +1,31 @@
 "use client";
 
+import { useState } from 'react';
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCreationFlow } from "@/contexts/CreationFlowContext";
-import { COPY } from "@/lib/i18n/copy";
 import { useRouter } from "next/navigation";
+import FacilitatorPromptCard from '@/components/facilitator/FacilitatorPromptCard';
+import { useFacilitatorPrompt } from '@/hooks/useFacilitatorPrompt';
 import { StepLayout } from "@/components/ui/StepLayout";
 import { OptionCard } from "@/components/ui/OptionCard";
+import { JOURNEY_CONTENT } from '@/lib/journey/content';
+import { Journey } from '@/types';
 
-import { MOODS, TOTAL_STEPS } from "@/lib/constants/creation";
+import { TOTAL_STEPS } from "@/lib/constants/creation";
 
 export default function Step1Mood() {
     const { language } = useLanguage();
-    const { updateState } = useCreationFlow();
+    const { state, updateState } = useCreationFlow();
     const router = useRouter();
-    const t = COPY[language];
+
+    const journey = (state.journey ?? 'feelings') as Journey;
+    const stepContent = JOURNEY_CONTENT[journey].step1;
+    const question = language === 'id' ? stepContent.question_id : stepContent.question_en;
+    const options = stepContent.options.slice(0, 3);
+
+    const { shouldShow, prompt, language: promptLanguage } = useFacilitatorPrompt('step1');
+    const [promptDismissed, setPromptDismissed] = useState(false);
+    const showCard = shouldShow && !promptDismissed;
 
     const handleSelect = (moodId: string) => {
         updateState({ mood: moodId });
@@ -21,22 +33,30 @@ export default function Step1Mood() {
     };
 
     return (
-        <StepLayout currentStep={1} totalSteps={TOTAL_STEPS} title={t.moodQuestion}>
+        <>
+        {showCard && prompt && (
+            <FacilitatorPromptCard
+                prompt={prompt}
+                language={promptLanguage}
+                onContinue={() => setPromptDismissed(true)}
+                stepLabel={promptLanguage === 'id' ? 'Sebelum Langkah 1' : 'Before Step 1'}
+            />
+        )}
+        <StepLayout currentStep={1} totalSteps={TOTAL_STEPS} title={question}>
             {/* 3 Choices - Vertical Stack for immediate accessibility */}
             <div className="flex flex-col gap-4 w-full">
-                {MOODS.map((mood) => (
+                {options.map((opt) => (
                     <OptionCard
-                        key={mood.id}
-                        id={mood.id}
-                        labelEn={mood.label_en}
-                        labelId={mood.label_id}
-                        icon={mood.icon}
-                        iconBgClass={mood.color}
+                        key={opt.id}
+                        id={opt.value}
+                        labelEn={opt.label_en}
+                        labelId={opt.label_id}
+                        icon={opt.emoji}
                         onClick={handleSelect}
-                        activeColorClass={`active:border-signal active:${mood.color}`}
                     />
                 ))}
             </div>
         </StepLayout>
+        </>
     );
 }

@@ -20,9 +20,14 @@ export default async function FacilitatorDashboard() {
             created_at,
             marketplace_status,
             session_notes,
+            journey,
+            learning_tags,
+            creation_story,
+            price_sgd,
             creators:creator_id (
                 name,
-                organisation
+                organisation,
+                facilitator_id
             )
         `)
         .eq('marketplace_status', 'pending_review')

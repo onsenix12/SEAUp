@@ -53,6 +53,8 @@ export interface Artwork {
     marketplace_status?: 'private' | 'pending_review' | 'approved' | 'rejected';
     ip_owner: string; // strictly 'creator'
     learning_tags?: string;
+    journey?: string;
+    price_sgd?: number;
     creators?: {
         name: string | null;
         organisation?: string;
@@ -87,6 +89,7 @@ export interface CreationFlowState {
     photo_taken?: boolean; // Tracking if user took a photo
     stickers_used?: number; // Tracking how many stickers were used
     style: string; // Optional, defaults to 'abstract_illustration'
+    journey?: 'feelings' | 'world' | 'sounds';
 }
 
 // Data shape sent to /api/create
@@ -107,6 +110,7 @@ export interface MusicFlowState {
     hasRecordedAudio?: boolean;
     recordedAudioBase64?: string;   // microphone recording
     nickname?: string;
+    journey?: Journey;              // 'sounds' when entered via journey flow
 }
 
 // ==========================================
@@ -128,5 +132,41 @@ export interface MusicTrack {
     marketplace_status?: 'private' | 'pending_review' | 'approved';
     ip_owner: string;
     learning_tags?: string;
+    journey?: string;
     created_at: string;
 }
+
+// ==========================================
+// 6. Journey
+// ==========================================
+export type Journey = 'feelings' | 'world' | 'sounds';
+
+export const JOURNEY_META: Record<Journey, {
+    label_en: string;
+    label_id: string;
+    emoji: string;
+    tagline_en: string;
+    tagline_id: string;
+}> = {
+    feelings: {
+        label_en: 'My Feelings',
+        label_id: 'Perasaan Saya',
+        emoji: '😊',
+        tagline_en: 'Express how you feel today',
+        tagline_id: 'Ungkapkan perasaanmu hari ini',
+    },
+    world: {
+        label_en: 'My World',
+        label_id: 'Dunia Saya',
+        emoji: '🗺️',
+        tagline_en: 'Draw the places you know',
+        tagline_id: 'Gambarkan tempat yang kamu kenal',
+    },
+    sounds: {
+        label_en: 'My Sounds',
+        label_id: 'Suara Saya',
+        emoji: '🎵',
+        tagline_en: 'Turn your sounds into music',
+        tagline_id: 'Ubah suaramu menjadi musik',
+    },
+};

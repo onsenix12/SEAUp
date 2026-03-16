@@ -9,6 +9,8 @@ import SkillsCard from "@/components/learning/SkillsCard";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import FacilitatorPromptCard from '@/components/facilitator/FacilitatorPromptCard';
+import { useFacilitatorPrompt } from '@/hooks/useFacilitatorPrompt';
 
 export default function Step9Print() {
     const { language } = useLanguage();
@@ -18,7 +20,12 @@ export default function Step9Print() {
     const router = useRouter();
     const t = COPY[language];
 
+    const { shouldShow, prompt, language: promptLanguage } = useFacilitatorPrompt('result');
+    const [promptDismissed, setPromptDismissed] = useState(false);
+    const showCard = shouldShow && !promptDismissed;
+
     const [artworkUrl, setArtworkUrl] = useState<string | null>(null);
+    const [creationStory, setCreationStory] = useState('');
 
     useEffect(() => {
         const storedUrl = sessionStorage.getItem("generated_artwork_url");
@@ -28,9 +35,19 @@ export default function Step9Print() {
             // Elegant placeholder instead of broken text snippet
             setArtworkUrl("https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=800&q=80");
         }
+        setCreationStory(sessionStorage.getItem("generated_creation_story") || "");
     }, []);
 
     return (
+        <>
+        {showCard && prompt && (
+            <FacilitatorPromptCard
+                prompt={prompt}
+                language={promptLanguage}
+                onContinue={() => setPromptDismissed(true)}
+                stepLabel={promptLanguage === 'id' ? 'Setelah Membuat' : 'After Creation'}
+            />
+        )}
         <div className="flex-1 flex flex-col w-full h-full max-w-md mx-auto relative pt-4 pb-8">
             {/* Title */}
             <div className="text-center mb-6">
@@ -83,6 +100,12 @@ export default function Step9Print() {
                 </div>
             </div>
 
+            {creationStory && (
+                <p className="font-body text-sm text-muted italic text-center px-4 mt-2">
+                    {creationStory}
+                </p>
+            )}
+
             <div className="bg-signal/10 border-2 border-signal rounded-creator p-6 text-center mb-8">
                 <p className="font-creator font-bold text-ink mb-2">
                     {language === 'en' ? 'Phase 2 Feature' : 'Fitur Tahap 2'}
@@ -107,5 +130,6 @@ export default function Step9Print() {
                 </Link>
             </div>
         </div>
+        </>
     );
 }

@@ -9,7 +9,7 @@ import { ApprovalModal } from "@/components/ui/ApprovalModal";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { storageStringToSkills } from "@/lib/learning/skills";
 
-interface PendingArtwork {
+export interface PendingArtwork {
     id: string;
     image_url: string;
     mood: string;
@@ -18,9 +18,14 @@ interface PendingArtwork {
     created_at: string;
     marketplace_status: string;
     session_notes: string | null;
+    journey?: string | null;
+    learning_tags?: string | null;
+    creation_story?: string | null;
+    price_sgd?: number | null;
     creators?: {
         name: string | null;
         organisation: string;
+        facilitator_id?: string | null;
     };
 }
 
@@ -201,6 +206,11 @@ export default function FacilitatorDashboardClient({ initialArtworks, isAdminByp
                                 mood={art.mood}
                                 colourPalette={art.colour_palette}
                                 subject={art.subject}
+                                journey={art.journey ?? undefined}
+                                learningTags={art.learning_tags ?? undefined}
+                                creationStory={art.creation_story ?? undefined}
+                                priceSgd={art.price_sgd ?? undefined}
+                                facilitatorId={art.creators?.facilitator_id ?? undefined}
                                 isUpdating={isUpdating === art.id}
                                 onAction={handleAction}
                             />

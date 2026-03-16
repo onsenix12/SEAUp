@@ -1,6 +1,7 @@
 // Server Component for fetching live Marketplace data
 import MarketplaceClient from "./MarketplaceClient";
 import { createSupabaseServiceClient } from "@/lib/supabase";
+import { Artwork } from "@/types";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -19,6 +20,9 @@ export default async function MarketplacePage() {
             creator_age,
             creator_location,
             creation_story,
+            journey,
+            learning_tags,
+            price_sgd,
             mood,
             colour_palette,
             subject,
@@ -35,5 +39,5 @@ export default async function MarketplacePage() {
         console.error("Error fetching marketplace artworks:", error);
     }
 
-    return <MarketplaceClient artworks={artworks as any || []} />;
+    return <MarketplaceClient artworks={(artworks ?? []) as Artwork[]} />;
 }

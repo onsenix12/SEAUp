@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { deriveMusicSkills } from "@/lib/learning/skills";
 import SkillsCard from "@/components/learning/SkillsCard";
+import FacilitatorPromptCard from '@/components/facilitator/FacilitatorPromptCard';
+import { useFacilitatorPrompt } from '@/hooks/useFacilitatorPrompt';
 
 export default function MusicResult() {
     const { language } = useLanguage();
@@ -17,6 +19,10 @@ export default function MusicResult() {
     const router = useRouter();
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
+
+    const { shouldShow, prompt: facilitatorPrompt, language: promptLanguage } = useFacilitatorPrompt('result');
+    const [promptDismissed, setPromptDismissed] = useState(false);
+    const showCard = shouldShow && !promptDismissed;
     const [isSaving, setIsSaving] = useState(false);
     const [saved, setSaved] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -24,7 +30,7 @@ export default function MusicResult() {
     const [audioSrc, setAudioSrc] = useState<string | null>(null);
     const [coverSrc, setCoverSrc] = useState<string | null>(null);
     const [story, setStory] = useState<string>('');
-    const [prompt, setPrompt] = useState<string>('');
+    const [musicPromptText, setMusicPromptText] = useState<string>('');
 
     const t = {
         title: language === 'en' ? 'Your Music' : 'Musikmu',
@@ -48,7 +54,7 @@ export default function MusicResult() {
         const audio = sessionStorage.getItem('generated_music_audio');
         const cover = sessionStorage.getItem('generated_music_cover');
         const story = sessionStorage.getItem('generated_music_story') || '';
-        const prompt = sessionStorage.getItem('generated_music_prompt') || '';
+        const savedMusicPrompt = sessionStorage.getItem('generated_music_prompt') || '';
         const lyriaOk = sessionStorage.getItem('lyria_available') !== 'false';
         const genError = sessionStorage.getItem('music_error');
         const lyriaErr = sessionStorage.getItem('lyria_error');
@@ -56,7 +62,7 @@ export default function MusicResult() {
         if (genError) setError(genError);
         setLyriaAvailable(lyriaOk);
         setStory(story);
-        setPrompt(prompt);
+        setMusicPromptText(savedMusicPrompt);
 
         if (audio) {
             setAudioSrc(`data:audio/wav;base64,${audio}`);
@@ -107,7 +113,8 @@ export default function MusicResult() {
                     audioBase64,
                     coverBase64: coverBase64 || null,
                     creationStory: story,
-                    musicPrompt: prompt,
+                    musicPrompt: musicPromptText,
+                    journey: state.journey,
                 }),
             });
 
@@ -136,7 +143,7 @@ export default function MusicResult() {
     const handleTryAgain = () => {
         ['generated_music_audio', 'generated_music_cover', 'generated_music_story', 'generated_music_prompt', 'lyria_available', 'lyria_error', 'music_error'].forEach(k => sessionStorage.removeItem(k));
         resetState();
-        router.replace('/create/music');
+        router.replace(state.journey === 'sounds' ? '/create/step-1-mood' : '/create/music');
     };
 
     if (error) {
@@ -155,6 +162,15 @@ export default function MusicResult() {
     }
 
     return (
+        <>
+        {showCard && facilitatorPrompt && (
+            <FacilitatorPromptCard
+                prompt={facilitatorPrompt}
+                language={promptLanguage}
+                onContinue={() => setPromptDismissed(true)}
+                stepLabel={promptLanguage === 'id' ? 'Setelah Membuat' : 'After Creation'}
+            />
+        )}
         <div className="flex-1 flex flex-col w-full h-full max-w-md mx-auto pt-6 px-5 pb-8 gap-6">
 
             {/* Title */}
@@ -237,10 +253,10 @@ export default function MusicResult() {
             )}
 
             {/* Music prompt */}
-            {prompt && (
+            {musicPromptText && (
                 <div className="bg-ink/3 rounded-creator px-4 py-3 border border-border">
                     <p className="font-creator text-xs text-ink/40 uppercase tracking-wider mb-1">{t.musicPrompt}</p>
-                    <p className="font-creator text-sm text-ink/70 line-clamp-3">{prompt}</p>
+                    <p className="font-creator text-sm text-ink/70 line-clamp-3">{musicPromptText}</p>
                 </div>
             )}
 
@@ -267,5 +283,6 @@ export default function MusicResult() {
                 </button>
             </div>
         </div>
+        </>
     );
 }

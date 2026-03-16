@@ -2,7 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import NextImage from 'next/image';
-import { Artwork } from '@/types';
+import { Artwork, JOURNEY_META, Journey } from '@/types';
+import { storageStringToSkills } from '@/lib/learning/skills';
 
 interface MarketplaceArtworkCardProps {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,18 +65,18 @@ export function MarketplaceArtworkCard({
                     {/* Dark Glass Reveal on Hover — fixed blur, slide up animation */}
                     <div className="absolute bottom-0 left-0 w-full h-[45%] md:h-[40%] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out z-10 p-4 md:p-6 flex flex-col justify-end">
                         <div className="absolute inset-0 bg-ink/55 backdrop-blur-xl -z-10 border-t border-signal/40" />
-                        <p className="font-body text-xs md:text-sm text-canvas/80 mb-1">
+                        <p className="font-body text-xs sm:text-sm text-canvas/80 mb-1">
                             {artwork.creator_age || '??'} yrs · {artwork.creator_location || 'Unknown'}
                         </p>
-                        <p className="font-body text-[10px] md:text-xs text-canvas/60 mb-2 md:mb-3 italic">
+                        <p className="font-body text-[10px] sm:text-xs text-canvas/60 mb-2 sm:mb-3 italic">
                             &quot;{artwork.creation_story || 'No story provided.'}&quot;
                         </p>
                         <div className="flex items-center justify-between mt-auto">
-                            <span className="font-display text-xl md:text-2xl text-canvas truncate mr-2">
+                            <span className="font-display text-lg sm:text-xl md:text-2xl text-canvas truncate mr-2">
                                 {artwork.title || 'Untitled'}
                             </span>
-                            <span className="font-mono text-xs md:text-sm text-signal">
-                                ${artwork.price || 0} SGD
+                            <span className="font-mono text-xs sm:text-sm text-signal">
+                                {(artwork.price ?? 0) > 0 ? `$${artwork.price} SGD` : 'Price on request'}
                             </span>
                         </div>
                     </div>
@@ -110,6 +111,41 @@ export function MarketplaceArtworkCard({
                             {mood.label}
                         </span>
                     </div>
+
+                    {/* Creator attribution */}
+                    <p className="font-body text-sm font-medium text-ink">
+                        {artwork.creators?.name?.split(' ')[0] || 'Creator'}
+                        {artwork.creators?.organisation ? ` · ${artwork.creators.organisation}` : ''}
+                    </p>
+
+                    {/* Creation Story */}
+                    {artwork.creation_story && (
+                        <p className="font-body text-sm text-muted italic mt-1">{artwork.creation_story}</p>
+                    )}
+
+                    {/* Journey + Skills row */}
+                    <div className="flex flex-wrap gap-1 mt-2">
+                        {artwork.journey && JOURNEY_META[artwork.journey as Journey] && (
+                            <span className="bg-amber-100 text-amber-800 text-xs font-medium px-2 py-1 rounded-full">
+                                {JOURNEY_META[artwork.journey as Journey].emoji} {JOURNEY_META[artwork.journey as Journey].label_en}
+                            </span>
+                        )}
+                        {storageStringToSkills(artwork.learning_tags ?? '').slice(0, 2).map(skill => (
+                            <span key={skill.id} className="bg-teal-50 text-teal-700 text-xs font-medium px-2 py-1 rounded-full">
+                                {skill.emoji} {skill.label_en}
+                            </span>
+                        ))}
+                    </div>
+
+                    {/* Support badge */}
+                    <p className="font-body text-xs text-muted mt-2">
+                        ❤️ This purchase supports {artwork.creators?.name || 'a creator'}&apos;s creative journey
+                    </p>
+
+                    {/* Price */}
+                    <p className="font-creator text-lg font-bold text-ink mt-2">
+                        {(artwork.price_sgd ?? 0) > 0 ? `SGD $${artwork.price_sgd}` : 'Price on request'}
+                    </p>
                 </div>
             </motion.article>
         </Link>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCreationFlow } from "@/contexts/CreationFlowContext";
 import { useFacilitator } from "@/contexts/FacilitatorContext";
@@ -14,6 +15,12 @@ export default function Step9ShopSuccess() {
     const { sessionData } = useFacilitator();
     const skills = deriveImageSkills(state);
     const t = COPY[language];
+
+    const [creationStory, setCreationStory] = useState('');
+
+    useEffect(() => {
+        setCreationStory(sessionStorage.getItem("generated_creation_story") || "");
+    }, []);
 
     return (
         <div className="flex-1 flex flex-col w-full h-full max-w-md mx-auto relative pt-12 pb-8">
@@ -31,6 +38,12 @@ export default function Step9ShopSuccess() {
                     {language === 'en' ? 'Your artwork looks great. A SEA-Up co-artist will review it before it goes live in the public shop.' : 'Karya Anda tampak hebat. Rekan seniman SEA-Up akan meninjaunya sebelum ditayangkan.'}
                 </p>
             </div>
+
+            {creationStory && (
+                <p className="font-body text-sm text-muted italic text-center px-4 mt-2">
+                    {creationStory}
+                </p>
+            )}
 
             <div className="bg-surface border-2 border-border rounded-creator p-6 text-center mb-12 shadow-sm">
                 <p className="font-creator font-bold text-ink mb-2">

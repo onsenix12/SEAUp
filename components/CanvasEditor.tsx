@@ -5,10 +5,18 @@ import { Stage, Layer, Line, Image as KonvaImage, Text } from "react-konva";
 import useImage from "use-image";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+interface StickerOption {
+    emoji: string;
+    id?: string;
+    label_en?: string;
+}
+
 interface CanvasEditorProps {
     backgroundImageBase64?: string;
     shouldExport: boolean;
     onExport: (base64: string, hasDrawn: boolean, stickersUsed: number) => void;
+    stickers?: StickerOption[];
+    showStickers?: boolean;
 }
 
 interface DrawLine {
@@ -24,10 +32,13 @@ interface Sticker {
     y: number;
 }
 
-const STICKERS = ["🌟", "❤️", "😊", "🎈", "🌸", "🔥"];
+const DEFAULT_STICKERS = ["🌟", "❤️", "😊", "🎈", "🌸", "🔥"];
 const COLORS = ["#1C1C1A", "#FFFFFF", "#E53D00", "#FFB800", "#00B2A9"];
 
-export default function CanvasEditor({ backgroundImageBase64, shouldExport, onExport }: CanvasEditorProps) {
+export default function CanvasEditor({ backgroundImageBase64, shouldExport, onExport, stickers: stickersProp, showStickers = true }: CanvasEditorProps) {
+    const activeStickers = stickersProp && stickersProp.length > 0
+        ? stickersProp.map(s => s.emoji)
+        : DEFAULT_STICKERS;
     const { language } = useLanguage();
     const stageRef = useRef<any>(null);
     const [lines, setLines] = useState<DrawLine[]>([]);
@@ -153,17 +164,19 @@ export default function CanvasEditor({ backgroundImageBase64, shouldExport, onEx
             </div>
 
             {/* Sticker Tray */}
-            <div className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2 hide-scrollbar">
-                {STICKERS.map((sticker) => (
-                    <button
-                        key={sticker}
-                        onClick={() => addSticker(sticker)}
-                        className="text-4xl hover:scale-105 active:scale-95 transition-transform bg-surface min-h-[72px] min-w-[72px] flex items-center justify-center rounded-creator border-2 border-border flex-shrink-0"
-                    >
-                        {sticker}
-                    </button>
-                ))}
-            </div>
+            {showStickers && (
+                <div className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2 hide-scrollbar">
+                    {activeStickers.map((sticker) => (
+                        <button
+                            key={sticker}
+                            onClick={() => addSticker(sticker)}
+                            className="text-4xl hover:scale-105 active:scale-95 transition-transform bg-surface min-h-[72px] min-w-[72px] flex items-center justify-center rounded-creator border-2 border-border flex-shrink-0"
+                        >
+                            {sticker}
+                        </button>
+                    ))}
+                </div>
+            )}
 
             {/* Canvas Area */}
             <div ref={containerRef} className="w-full aspect-square bg-white rounded-creator overflow-hidden border-2 border-border shadow-sm touch-none">

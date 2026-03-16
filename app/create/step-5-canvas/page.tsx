@@ -2,12 +2,16 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCreationFlow } from "@/contexts/CreationFlowContext";
-import { COPY } from "@/lib/i18n/copy";
+import { useMusicFlow } from "@/contexts/MusicFlowContext";
 import { TOTAL_STEPS } from "@/lib/constants/creation";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import FacilitatorPromptCard from '@/components/facilitator/FacilitatorPromptCard';
+import { useFacilitatorPrompt } from '@/hooks/useFacilitatorPrompt';
 import { StepLayout } from "@/components/ui/StepLayout";
+import { JOURNEY_CONTENT } from '@/lib/journey/content';
+import { Journey } from '@/types';
 
 // Dynamically import CanvasEditor to avoid SSR issues with Konva
 const CanvasEditor = dynamic(() => import("@/components/CanvasEditor"), {
@@ -22,13 +26,28 @@ const CanvasEditor = dynamic(() => import("@/components/CanvasEditor"), {
 export default function Step5Canvas() {
     const { language } = useLanguage();
     const { state, updateState } = useCreationFlow();
+    const { updateState: musicUpdateState } = useMusicFlow();
     const router = useRouter();
-    const t = COPY[language];
+
+    const journey = (state.journey ?? 'feelings') as Journey;
+    const canvasConfig = JOURNEY_CONTENT[journey].canvas;
+    const canvasPrompt = language === 'id' ? canvasConfig.prompt_id : canvasConfig.prompt_en;
+
+    const { shouldShow, prompt, language: promptLanguage } = useFacilitatorPrompt('canvas');
+    const [promptDismissed, setPromptDismissed] = useState(false);
+    const showCard = shouldShow && !promptDismissed;
 
     const [shouldExport, setShouldExport] = useState(false);
 
     const handleSkip = () => {
-        router.push("/create/step-6-style");
+        if (journey === 'sounds') {
+            // Sounds journey skips canvas entirely — bridge to music flow with existing choices
+            const soundEffects = state.colour_palette?.split(',').filter(Boolean) ?? [];
+            musicUpdateState({ mode: 'from_scratch', soundEffects, journey: 'sounds', nickname: state.nickname });
+            router.push("/create/music/generating");
+        } else {
+            router.push("/create/step-6-style");
+        }
     };
 
     const handleNext = () => {
@@ -42,26 +61,40 @@ export default function Step5Canvas() {
             canvas_base64: base64,
             has_drawn: hasDrawn,
             stickers_used: stickersUsed,
-            photo_taken: !!state.photo_base64 // Check if a photo base64 already exists in state
+            photo_taken: !!state.photo_base64
         });
-        router.push("/create/step-6-style");
+
+        if (journey === 'sounds') {
+            // Bridge sound choices into MusicFlowContext and generate music
+            const soundEffects = state.colour_palette?.split(',').filter(Boolean) ?? [];
+            // Include emotional tone (subject) as extra context for the music prompt
+            const allEffects = state.subject ? [...soundEffects, state.subject] : soundEffects;
+            musicUpdateState({ mode: 'from_scratch', soundEffects: allEffects, journey: 'sounds', nickname: state.nickname });
+            router.push("/create/music/generating");
+        } else {
+            router.push("/create/step-6-style");
+        }
     };
 
     return (
-        <StepLayout
-            currentStep={5}
-            totalSteps={TOTAL_STEPS}
-            // @ts-ignore
-            title={t.canvasQuestion}
-            // @ts-ignore
-            subtitle={t.canvasSubtitle}
-        >
+        <>
+        {showCard && prompt && (
+            <FacilitatorPromptCard
+                prompt={prompt}
+                language={promptLanguage}
+                onContinue={() => setPromptDismissed(true)}
+                stepLabel={promptLanguage === 'id' ? 'Sebelum Kanvas' : 'Before Canvas'}
+            />
+        )}
+        <StepLayout currentStep={5} totalSteps={TOTAL_STEPS} title={canvasPrompt}>
             {/* Main Interaction Area */}
-            <div className="flex-1 flex flex-col items-center w-full">
+            <div className="flex-1 flex flex-col items-center w-full max-h-[55vh]">
                 <CanvasEditor
                     backgroundImageBase64={state.photo_base64}
                     shouldExport={shouldExport}
                     onExport={handleCanvasExport}
+                    stickers={canvasConfig.stickers}
+                    showStickers={canvasConfig.stickers.length > 0}
                 />
             </div>
 
@@ -81,5 +114,6 @@ export default function Step5Canvas() {
                 </button>
             </div>
         </StepLayout>
+        </>
     );
 }

@@ -15,6 +15,7 @@ interface MarketplaceClientProps {
 
 export default function MarketplaceClient({ artwork, isMock = false }: MarketplaceClientProps) {
     const [mounted, setMounted] = useState(false);
+    const [impactOpen, setImpactOpen] = useState(false);
 
     useEffect(() => {
         setMounted(true);
@@ -110,6 +111,32 @@ export default function MarketplaceClient({ artwork, isMock = false }: Marketpla
                         <button className="bg-signal text-ink font-semibold text-sm tracking-wide px-8 h-[48px] hover:bg-signal/90 active:scale-[0.98] transition-all duration-150 rounded-[4px]">
                             Acquire this piece
                         </button>
+
+                        <div className="mt-6 border-t border-ink/10 pt-4">
+                            <button
+                                onClick={() => setImpactOpen(!impactOpen)}
+                                className="font-body text-sm font-medium text-ink underline cursor-pointer"
+                            >
+                                {impactOpen ? '▲' : '▼'} About this artwork&apos;s impact
+                            </button>
+
+                            {impactOpen && (
+                                <div className="mt-3 space-y-2">
+                                    <p className="font-body text-sm text-muted">
+                                        This artwork was created by an individual with an intellectual disability using SEA-Up Creative — an AI-powered learning platform that builds real vocational skills through creative expression.
+                                    </p>
+                                    <p className="font-body text-sm text-muted">
+                                        60% of this purchase goes directly to the creator. 20% supports the SEA-Up Community Fund, which onboards new creators across ASEAN.
+                                    </p>
+                                    <a
+                                        href="mailto:hello@sea-up.com"
+                                        className="font-body text-sm font-medium text-teal-600 underline"
+                                    >
+                                        Enquire about bulk licensing →
+                                    </a>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </section>
