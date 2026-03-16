@@ -172,7 +172,7 @@ export default function Step8Decision() {
             </div>
 
             {creationStory && (
-                <p className="font-body text-sm text-muted italic text-center px-4 mt-2">
+                <p className="font-body text-sm text-muted italic text-center px-4 mt-4 mb-2">
                     {creationStory}
                 </p>
             )}
@@ -184,7 +184,7 @@ export default function Step8Decision() {
             />
 
             {/* The Decision Layer */}
-            <div className="flex flex-col gap-4 w-full mt-auto">
+            <div className="flex flex-col gap-4 w-full mt-8">
                 {sessionData.isActive && (
                     <button
                         onClick={() => handleSaveDecision('pending_review')}
