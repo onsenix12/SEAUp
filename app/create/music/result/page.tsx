@@ -272,12 +272,24 @@ export default function MusicResult() {
                                 {s}
                             </span>
                         ))}
-                        {state.hasRecordedAudio && (
-                            <span className="bg-ink/10 text-ink font-creator text-sm font-bold px-3 py-1 rounded-full">
-                                🎙 {language === 'en' ? 'Your Voice' : 'Suaramu'}
-                            </span>
-                        )}
                     </div>
+                </div>
+            )}
+
+            {/* Recorded audio playback */}
+            {state.recordedAudioBase64 && (
+                <div className="bg-surface border border-border rounded-creator px-4 py-3">
+                    <p className="font-creator text-xs text-ink/40 uppercase tracking-wider mb-2">
+                        🎙 {language === 'en' ? 'Your Recording' : 'Rekamanmu'}
+                    </p>
+                    <audio
+                        src={`data:audio/webm;base64,${state.recordedAudioBase64}`}
+                        controls
+                        className="w-full h-10"
+                    />
+                    <p className="font-creator text-xs text-ink/40 mt-1">
+                        {language === 'en' ? 'Used to shape your music' : 'Digunakan untuk membentuk musikmu'}
+                    </p>
                 </div>
             )}
 

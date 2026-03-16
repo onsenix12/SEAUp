@@ -242,8 +242,21 @@ export async function buildMusicPrompt(
             userPrompt += `- Sound Palette: ${state.soundEffects.join(', ')}\n`;
         }
 
-        if (state.hasRecordedAudio) {
-            userPrompt += `- The creator also recorded their own sounds as an additional sonic layer.\n`;
+        if (state.recordedAudioBase64) {
+            // Analyze the actual recording with Gemini so it meaningfully affects the output
+            try {
+                const audioModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+                const audioAnalysis = await audioModel.generateContent([
+                    { text: "In 10 words or less, describe the sonic qualities of this recording for a music composition (e.g. 'rhythmic finger-tapping', 'soft humming melody', 'rain on glass'). Return only the description, nothing else." },
+                    { inlineData: { mimeType: "audio/webm", data: state.recordedAudioBase64 } },
+                ]);
+                const soundDescription = audioAnalysis.response.text().trim();
+                userPrompt += `- Recorded Sound to Feature: "${soundDescription}" — make this the central sonic identity of the composition, weaving it throughout.\n`;
+            } catch {
+                userPrompt += `- Recorded Sound: The creator's own recorded sounds should be a central sonic element of the composition.\n`;
+            }
+        } else if (state.hasRecordedAudio) {
+            userPrompt += `- Recorded Sound: The creator's own sounds should be a central sonic element of the composition.\n`;
         }
 
         const result = await model.generateContent({

@@ -118,6 +118,11 @@ export default function MusicGenerating() {
                 <h1 className="font-creator text-4xl font-bold text-ink">{t.title}</h1>
                 <p className="font-creator text-lg text-ink/60 px-4">{t.subtitle}</p>
                 <p className="font-creator text-sm text-ink/40">{t.patience}</p>
+                {state.recordedAudioBase64 && (
+                    <p className="font-creator text-sm text-signal font-bold">
+                        🎙 {language === 'en' ? 'Analysing your recording…' : 'Menganalisis rekamanmu…'}
+                    </p>
+                )}
             </div>
         </div>
     );
