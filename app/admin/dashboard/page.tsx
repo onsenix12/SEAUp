@@ -37,5 +37,5 @@ export default async function AdminDashboard() {
         console.error("Error fetching pending artworks:", error);
     }
 
-    return <FacilitatorDashboardClient initialArtworks={(pendingArtworks ?? []) as PendingArtwork[]} isAdminBypass={true} />;
+    return <FacilitatorDashboardClient initialArtworks={(pendingArtworks ?? []) as unknown as PendingArtwork[]} isAdminBypass={true} />;
 }
