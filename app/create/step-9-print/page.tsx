@@ -20,9 +20,8 @@ export default function Step9Print() {
     const router = useRouter();
     const t = COPY[language];
 
-    const { shouldShow, prompt, language: promptLanguage } = useFacilitatorPrompt('result');
-    const [promptDismissed, setPromptDismissed] = useState(false);
-    const showCard = shouldShow && !promptDismissed;
+    const { shouldShow, prompt, language: promptLanguage, dismiss } = useFacilitatorPrompt('result');
+    const showCard = shouldShow;
 
     const [artworkUrl, setArtworkUrl] = useState<string | null>(null);
     const [creationStory, setCreationStory] = useState('');
@@ -44,7 +43,7 @@ export default function Step9Print() {
             <FacilitatorPromptCard
                 prompt={prompt}
                 language={promptLanguage}
-                onContinue={() => setPromptDismissed(true)}
+                onContinue={dismiss}
                 stepLabel={promptLanguage === 'id' ? 'Setelah Membuat' : 'After Creation'}
             />
         )}

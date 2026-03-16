@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from 'react';
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCreationFlow } from "@/contexts/CreationFlowContext";
 import { useRouter } from "next/navigation";
@@ -23,9 +22,8 @@ export default function Step1Mood() {
     const question = language === 'id' ? stepContent.question_id : stepContent.question_en;
     const options = stepContent.options.slice(0, 3);
 
-    const { shouldShow, prompt, language: promptLanguage } = useFacilitatorPrompt('step1');
-    const [promptDismissed, setPromptDismissed] = useState(false);
-    const showCard = shouldShow && !promptDismissed;
+    const { shouldShow, prompt, language: promptLanguage, dismiss } = useFacilitatorPrompt('step1');
+    const showCard = shouldShow;
 
     const handleSelect = (moodId: string) => {
         updateState({ mood: moodId });
@@ -38,7 +36,7 @@ export default function Step1Mood() {
             <FacilitatorPromptCard
                 prompt={prompt}
                 language={promptLanguage}
-                onContinue={() => setPromptDismissed(true)}
+                onContinue={dismiss}
                 stepLabel={promptLanguage === 'id' ? 'Sebelum Langkah 1' : 'Before Step 1'}
             />
         )}

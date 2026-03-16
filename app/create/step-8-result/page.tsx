@@ -34,9 +34,8 @@ export default function Step8Decision() {
     const [isSaving, setIsSaving] = useState(false);
     const [choice, setChoice] = useState<'print' | 'shop' | 'save' | null>(null);
 
-    const { shouldShow, prompt, language: promptLanguage } = useFacilitatorPrompt('result');
-    const [promptDismissed, setPromptDismissed] = useState(false);
-    const showCard = shouldShow && !promptDismissed;
+    const { shouldShow, prompt, language: promptLanguage, dismiss } = useFacilitatorPrompt('result');
+    const showCard = shouldShow;
 
     const handleTryAgain = () => {
         resetState();
@@ -144,7 +143,7 @@ export default function Step8Decision() {
             <FacilitatorPromptCard
                 prompt={prompt}
                 language={promptLanguage}
-                onContinue={() => setPromptDismissed(true)}
+                onContinue={dismiss}
                 stepLabel={promptLanguage === 'id' ? 'Setelah Membuat' : 'After Creation'}
             />
         )}

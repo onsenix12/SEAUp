@@ -7,15 +7,20 @@ import { Journey } from '@/types';
 type PromptStep = 'step1' | 'canvas' | 'result';
 
 export function useFacilitatorPrompt(step: PromptStep) {
-  const { sessionData } = useFacilitator();
+  const { sessionData, dismissedPrompts, dismissPrompt } = useFacilitator();
   const { state } = useCreationFlow();
   const { language } = useLanguage();
 
   const isActive = sessionData.isActive;
   const journey = state.journey as Journey | undefined;
+  const dismiss = () => dismissPrompt(step);
 
   if (!isActive || !journey) {
-    return { shouldShow: false, prompt: null, language };
+    return { shouldShow: false, prompt: null, language, dismiss };
+  }
+
+  if (dismissedPrompts[step]) {
+    return { shouldShow: false, prompt: null, language, dismiss };
   }
 
   const content = JOURNEY_CONTENT[journey];
@@ -31,5 +36,6 @@ export function useFacilitatorPrompt(step: PromptStep) {
     shouldShow: !!prompt,
     prompt,
     language,
+    dismiss,
   };
 }

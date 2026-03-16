@@ -33,9 +33,8 @@ export default function Step5Canvas() {
     const canvasConfig = JOURNEY_CONTENT[journey].canvas;
     const canvasPrompt = language === 'id' ? canvasConfig.prompt_id : canvasConfig.prompt_en;
 
-    const { shouldShow, prompt, language: promptLanguage } = useFacilitatorPrompt('canvas');
-    const [promptDismissed, setPromptDismissed] = useState(false);
-    const showCard = shouldShow && !promptDismissed;
+    const { shouldShow, prompt, language: promptLanguage, dismiss } = useFacilitatorPrompt('canvas');
+    const showCard = shouldShow;
 
     const [shouldExport, setShouldExport] = useState(false);
 
@@ -82,7 +81,7 @@ export default function Step5Canvas() {
             <FacilitatorPromptCard
                 prompt={prompt}
                 language={promptLanguage}
-                onContinue={() => setPromptDismissed(true)}
+                onContinue={dismiss}
                 stepLabel={promptLanguage === 'id' ? 'Sebelum Kanvas' : 'Before Canvas'}
             />
         )}

@@ -20,9 +20,8 @@ export default function MusicResult() {
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
 
-    const { shouldShow, prompt: facilitatorPrompt, language: promptLanguage } = useFacilitatorPrompt('result');
-    const [promptDismissed, setPromptDismissed] = useState(false);
-    const showCard = shouldShow && !promptDismissed;
+    const { shouldShow, prompt: facilitatorPrompt, language: promptLanguage, dismiss } = useFacilitatorPrompt('result');
+    const showCard = shouldShow;
     const [isSaving, setIsSaving] = useState(false);
     const [saved, setSaved] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -175,7 +174,7 @@ export default function MusicResult() {
             <FacilitatorPromptCard
                 prompt={facilitatorPrompt}
                 language={promptLanguage}
-                onContinue={() => setPromptDismissed(true)}
+                onContinue={dismiss}
                 stepLabel={promptLanguage === 'id' ? 'Setelah Membuat' : 'After Creation'}
             />
         )}

@@ -15,6 +15,8 @@ interface FacilitatorContextType {
     sessionData: FacilitatorSessionData;
     startSession: (facilitatorId: string, creatorName: string, org: string) => void;
     endSession: () => void;
+    dismissedPrompts: Record<string, boolean>;
+    dismissPrompt: (step: string) => void;
 }
 
 const defaultState: FacilitatorSessionData = {
@@ -29,6 +31,7 @@ const FacilitatorContext = createContext<FacilitatorContextType | undefined>(und
 
 export function FacilitatorProvider({ children }: { children: ReactNode }) {
     const [sessionData, setSessionData] = useState<FacilitatorSessionData>(defaultState);
+    const [dismissedPrompts, setDismissedPrompts] = useState<Record<string, boolean>>({});
 
     const startSession = (facilitatorId: string, creatorName: string, org: string) => {
         setSessionData({
@@ -38,14 +41,20 @@ export function FacilitatorProvider({ children }: { children: ReactNode }) {
             sessionStartTime: Date.now(),
             isActive: true,
         });
+        setDismissedPrompts({});
     };
 
     const endSession = () => {
         setSessionData(defaultState);
+        setDismissedPrompts({});
+    };
+
+    const dismissPrompt = (step: string) => {
+        setDismissedPrompts(prev => ({ ...prev, [step]: true }));
     };
 
     return (
-        <FacilitatorContext.Provider value={{ sessionData, startSession, endSession }}>
+        <FacilitatorContext.Provider value={{ sessionData, startSession, endSession, dismissedPrompts, dismissPrompt }}>
             {children}
         </FacilitatorContext.Provider>
     );
