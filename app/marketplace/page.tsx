@@ -39,5 +39,5 @@ export default async function MarketplacePage() {
         console.error("Error fetching marketplace artworks:", error);
     }
 
-    return <MarketplaceClient artworks={(artworks ?? []) as Artwork[]} />;
+    return <MarketplaceClient artworks={(artworks ?? []) as unknown as Artwork[]} />;
 }
