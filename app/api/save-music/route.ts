@@ -61,7 +61,7 @@ export async function POST(request: Request) {
 
                 const { error: coverStorageError } = await supabase.storage
                     .from('artworks')
-                    .upload(coverFileName, new Uint8Array(coverBuffer).buffer, {
+                    .upload(coverFileName, coverBuffer, {
                         contentType: mimeType,
                         upsert: false,
                     });
@@ -103,7 +103,7 @@ export async function POST(request: Request) {
         if (trackError) {
             console.error("Failed to save music track record:", trackError);
             return NextResponse.json(
-                { success: false, error: "Database error saving music track" },
+                { success: false, error: `DB error saving music track: ${trackError.message}` },
                 { status: 500 }
             );
         }
@@ -118,9 +118,10 @@ export async function POST(request: Request) {
         });
 
     } catch (error) {
-        console.error("Save Music API Error:", error);
+        const msg = error instanceof Error ? error.message : String(error);
+        console.error("Save Music API Error:", msg);
         return NextResponse.json(
-            { success: false, error: "Internal server error during music save." },
+            { success: false, error: msg },
             { status: 500 }
         );
     }

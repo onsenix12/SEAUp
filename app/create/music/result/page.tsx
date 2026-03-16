@@ -47,6 +47,7 @@ export default function MusicResult() {
             : (language === 'en' ? 'Play' : 'Putar'),
         sourceArtwork: language === 'en' ? 'Inspired by this artwork' : 'Terinspirasi dari karya ini',
         musicPrompt: language === 'en' ? 'Music Direction' : 'Arahan Musik',
+        soundPalette: language === 'en' ? 'Your Sound Palette' : 'Palet Suaramu',
     };
 
     useEffect(() => {
@@ -115,12 +116,14 @@ export default function MusicResult() {
             });
             if (!uploadRes.ok) throw new Error(`Audio upload failed: ${uploadRes.status}`);
 
-            // 2. Save metadata (no audio blob in body)
+            // 2. Save metadata — strip recordedAudioBase64 (large blob, not needed server-side)
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { recordedAudioBase64: _drop, ...stateForSave } = state;
             const response = await fetch('/api/save-music', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    state,
+                    state: stateForSave,
                     audioStoragePath: urlData.path,
                     coverBase64: coverBase64 || null,
                     creationStory: story,
@@ -259,11 +262,30 @@ export default function MusicResult() {
                 </div>
             )}
 
-            {/* Music prompt */}
+            {/* Sound palette — what the user selected */}
+            {state.soundEffects && state.soundEffects.length > 0 && (
+                <div>
+                    <p className="font-creator text-xs text-ink/40 uppercase tracking-wider mb-2">{t.soundPalette}</p>
+                    <div className="flex flex-wrap gap-2">
+                        {state.soundEffects.map(s => (
+                            <span key={s} className="bg-signal/20 text-ink font-creator text-sm font-bold px-3 py-1 rounded-full capitalize">
+                                {s}
+                            </span>
+                        ))}
+                        {state.hasRecordedAudio && (
+                            <span className="bg-ink/10 text-ink font-creator text-sm font-bold px-3 py-1 rounded-full">
+                                🎙 {language === 'en' ? 'Your Voice' : 'Suaramu'}
+                            </span>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {/* Music direction — full text, no truncation */}
             {musicPromptText && (
                 <div className="bg-ink/3 rounded-creator px-4 py-3 border border-border">
                     <p className="font-creator text-xs text-ink/40 uppercase tracking-wider mb-1">{t.musicPrompt}</p>
-                    <p className="font-creator text-sm text-ink/70 line-clamp-3">{musicPromptText}</p>
+                    <p className="font-creator text-sm text-ink/70">{musicPromptText}</p>
                 </div>
             )}
 
