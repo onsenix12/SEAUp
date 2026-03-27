@@ -132,3 +132,4 @@
 - [x] **Cleanup**: Removed the generated creation story display from the Shop Success page (`step-9-shop-success`).
 - [x] **Feature**: Added a "Title" input field to the Admin/Facilitator `PendingArtworkCard` so facilitators can name artworks before approving them to the marketplace. The title is saved to the database upon approval.
 - [x] **Feature**: Implemented explicit Featured Artwork logic. Added `is_featured` boolean to the `artworks` database schema. Added a star toggle in the Admin Dashboard to feature artworks. Sourced the marketplace Hero to display `is_featured` items first.
+- [x] **UI Polish**: Refactored the Gallery page layout to group artworks and music tracks logically by the creator's *Journey* choice (My Feelings, My World, My Sounds) rather than just separating visuals and music. Added "By Creator" overlays to Music cards for clarity.

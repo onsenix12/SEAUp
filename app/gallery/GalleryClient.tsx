@@ -3,7 +3,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCreationFlow } from "@/contexts/CreationFlowContext";
 import { useFacilitator } from "@/contexts/FacilitatorContext";
-import { Artwork, MusicTrack } from "@/types";
+import { Artwork, MusicTrack, JOURNEY_META } from "@/types";
 import { storageStringToSkills } from "@/lib/learning/skills";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -29,6 +29,22 @@ export default function GalleryClient({ initialArtworks, initialMusicTracks }: G
         if (!activeName) return [];
         return initialArtworks.filter(a => a.creators?.name === activeName);
     }, [initialArtworks, activeName]);
+
+    const myMusicTracks = useMemo(() => {
+        if (!activeName) return [];
+        return initialMusicTracks.filter(m => m.creators?.name === activeName);
+    }, [initialMusicTracks, activeName]);
+
+    const groupedData = useMemo(() => {
+        const feelings = myArtworks.filter(a => a.journey === 'feelings');
+        const world = myArtworks.filter(a => a.journey === 'world');
+        const sounds = myMusicTracks.filter(m => m.journey === 'sounds' || !m.journey); // Fallback sounds 
+        const otherArtworks = myArtworks.filter(a => a.journey !== 'feelings' && a.journey !== 'world');
+        
+        return { feelings, world, sounds, otherArtworks };
+    }, [myArtworks, myMusicTracks]);
+
+    const hasAnyContent = myArtworks.length > 0 || myMusicTracks.length > 0;
 
     const t = {
         title: language === 'en' ? 'My Gallery' : 'Galeri Saya',
@@ -74,66 +90,74 @@ export default function GalleryClient({ initialArtworks, initialMusicTracks }: G
             ) : (
                 <div className="flex flex-col gap-8 overflow-y-auto pb-20">
 
-                    {/* Visual Artworks Section */}
-                    {myArtworks.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center text-center py-10 gap-4">
-                            <p className="font-creator text-xl text-ink/60">{t.emptyArtworks}</p>
-                            <Link
-                                href="/create/step-1-mood"
-                                className="w-full min-h-[72px] bg-ink text-surface font-creator font-bold text-xl rounded-creator shadow-sm flex items-center justify-center active:scale-[0.98] transition-transform"
-                            >
-                                {t.createBtn}
-                            </Link>
-                        </div>
-                    ) : (
-                        <>
+                    {/* Helper to render artwork grid */}
+                    {groupedData.feelings.length > 0 && (
+                        <div className="mb-6">
+                            <h3 className="font-creator text-xl font-bold text-ink mb-4 flex items-center gap-2">
+                                {JOURNEY_META.feelings.emoji} {language === 'en' ? JOURNEY_META.feelings.label_en : JOURNEY_META.feelings.label_id}
+                            </h3>
                             <div className="grid grid-cols-2 gap-4 auto-rows-max scrollbar-hide">
-                                {myArtworks.map((artwork) => (
+                                {groupedData.feelings.map(artwork => (
                                     <ArtworkCard key={artwork.id} artwork={artwork} />
                                 ))}
                             </div>
-                            <Link
-                                href="/create/step-1-mood"
-                                className="w-full min-h-[64px] bg-surface text-ink font-creator font-bold text-lg rounded-creator border-2 border-border shadow-sm flex items-center justify-center active:scale-[0.98] transition-transform"
-                            >
-                                {t.createBtn}
-                            </Link>
-                        </>
+                        </div>
                     )}
 
-                    {/* Music Tracks Section */}
-                    <div>
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="font-creator text-xl font-bold text-ink">{t.musicSection}</h3>
-                            <Link
-                                href="/create/music"
-                                className="font-creator text-sm text-signal font-bold hover:underline"
-                            >
-                                + {t.makeMusicBtn}
-                            </Link>
-                        </div>
-
-                        {initialMusicTracks.length === 0 ? (
-                            <div className="border-2 border-dashed border-border rounded-creator p-8 flex flex-col items-center gap-3 text-center">
-                                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-ink/30">
-                                    <path d="M9 18V5l12-2v13" />
-                                    <circle cx="6" cy="18" r="3" />
-                                    <circle cx="18" cy="16" r="3" />
-                                </svg>
-                                <p className="font-creator text-base text-ink/50">
-                                    {language === 'en' ? 'No music created yet' : 'Belum ada musik yang dibuat'}
-                                </p>
-                                <Link href="/create/music" className="font-creator text-signal font-bold text-base hover:underline">
-                                    {t.makeMusicBtn}
-                                </Link>
+                    {groupedData.world.length > 0 && (
+                        <div className="mb-6">
+                            <h3 className="font-creator text-xl font-bold text-ink mb-4 flex items-center gap-2">
+                                {JOURNEY_META.world.emoji} {language === 'en' ? JOURNEY_META.world.label_en : JOURNEY_META.world.label_id}
+                            </h3>
+                            <div className="grid grid-cols-2 gap-4 auto-rows-max scrollbar-hide">
+                                {groupedData.world.map(artwork => (
+                                    <ArtworkCard key={artwork.id} artwork={artwork} />
+                                ))}
                             </div>
-                        ) : (
+                        </div>
+                    )}
+
+                    {groupedData.otherArtworks.length > 0 && (
+                        <div className="mb-6">
+                            <h3 className="font-creator text-xl font-bold text-ink mb-4">
+                                {language === 'en' ? 'Other Visuals' : 'Karya Visual Lainnya'}
+                            </h3>
+                            <div className="grid grid-cols-2 gap-4 auto-rows-max scrollbar-hide">
+                                {groupedData.otherArtworks.map(artwork => (
+                                    <ArtworkCard key={artwork.id} artwork={artwork} />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {groupedData.sounds.length > 0 && (
+                        <div className="mb-6">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="font-creator text-xl font-bold text-ink flex items-center gap-2">
+                                    {JOURNEY_META.sounds.emoji} {language === 'en' ? JOURNEY_META.sounds.label_en : JOURNEY_META.sounds.label_id}
+                                </h3>
+                            </div>
                             <div className="grid grid-cols-2 gap-4">
-                                {initialMusicTracks.map((track) => (
+                                {groupedData.sounds.map((track) => (
                                     <MusicTrackCard key={track.id} track={track} language={language} />
                                 ))}
                             </div>
-                        )}
+                        </div>
+                    )}
+
+                    {!hasAnyContent && (
+                        <div className="flex flex-col items-center justify-center text-center py-10 gap-4">
+                            <p className="font-creator text-xl text-ink/60">{t.emptyArtworks}</p>
+                        </div>
+                    )}
+
+                    <div className="flex flex-col gap-4 mt-6">
+                        <Link
+                            href="/create/step-1-mood"
+                            className="w-full min-h-[64px] bg-surface text-ink font-creator font-bold text-lg rounded-creator border-2 border-border shadow-sm flex items-center justify-center active:scale-[0.98] transition-transform"
+                        >
+                            {t.createBtn}
+                        </Link>
                     </div>
                 </div>
             )}
@@ -264,6 +288,15 @@ function MusicTrackCard({ track, language }: { track: MusicTrack; language: stri
                         )}
                     </div>
                 </button>
+
+                {/* Creator Name Overlay */}
+                {track.creators?.name && (
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 pt-6 pointer-events-none">
+                        <p className="font-creator text-white text-sm font-medium line-clamp-1">
+                            By {track.creators.name}
+                        </p>
+                    </div>
+                )}
             </div>
 
             {/* Mode label */}

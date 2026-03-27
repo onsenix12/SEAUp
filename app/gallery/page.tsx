@@ -20,7 +20,7 @@ export default async function GalleryPage() {
     // Fetch music tracks
     const { data: musicTracks, error: musicError } = await supabase
         .from('music_tracks')
-        .select('*')
+        .select('*, creators (name)')
         .order('created_at', { ascending: false });
 
     if (musicError) {

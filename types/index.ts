@@ -134,6 +134,10 @@ export interface MusicTrack {
     ip_owner: string;
     learning_tags?: string;
     journey?: string;
+    creators?: {
+        name: string | null;
+        organisation?: string;
+    };
     created_at: string;
 }
 
