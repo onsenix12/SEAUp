@@ -4,7 +4,7 @@ import { createSupabaseServiceClient } from "@/lib/supabase";
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { artworkId, status, title, description, price, price_sgd, creator_age, creator_location, creation_story } = body;
+        const { artworkId, status, title, description, price, price_sgd, creator_age, creator_location, creation_story, is_featured } = body;
 
         if (!artworkId || !status || !['approved', 'rejected'].includes(status)) {
             return NextResponse.json({ success: false, error: "Invalid payload" }, { status: 400 });
@@ -30,6 +30,9 @@ export async function POST(request: Request) {
             }
             if (price_sgd !== undefined) {
                 updateData.price_sgd = price_sgd;
+            }
+            if (is_featured !== undefined) {
+                updateData.is_featured = is_featured;
             }
         }
 

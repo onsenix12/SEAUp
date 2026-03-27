@@ -22,6 +22,7 @@ export default async function MarketplacePage() {
             creation_story,
             journey,
             learning_tags,
+            is_featured,
             price_sgd,
             mood,
             colour_palette,
@@ -33,6 +34,7 @@ export default async function MarketplacePage() {
             )
         `)
         .eq('is_public', true)
+        .order('is_featured', { ascending: false, nullsFirst: false })
         .order('created_at', { ascending: false });
 
     if (error) {

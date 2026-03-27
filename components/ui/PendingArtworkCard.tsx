@@ -17,7 +17,7 @@ interface PendingArtworkCardProps {
     priceSgd?: number;
     facilitatorId?: string;
     isUpdating: boolean;
-    onAction: (id: string, action: 'approved' | 'rejected', metadata?: { title: string; creation_story: string; price_sgd: number }) => void;
+    onAction: (id: string, action: 'approved' | 'rejected', metadata?: { title: string; creation_story: string; price_sgd: number; is_featured: boolean }) => void;
 }
 
 export function PendingArtworkCard({
@@ -41,6 +41,7 @@ export function PendingArtworkCard({
     const [title, setTitle] = useState(initialTitle ?? '');
     const [editedStory, setEditedStory] = useState(creationStory ?? '');
     const [price, setPrice] = useState(priceSgd ?? 0);
+    const [isFeatured, setIsFeatured] = useState(false);
     return (
         <div className="bg-surface rounded-creator border-2 border-border overflow-hidden flex flex-col">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -139,6 +140,20 @@ export function PendingArtworkCard({
                     <p className="font-body text-xs text-muted mt-1">Prints: $25–80 · Tote bags: $35–55 · Digital: $50–200</p>
                 </div>
 
+                {/* Featured Checkbox */}
+                <div className="mb-6 flex items-center gap-3">
+                    <input
+                        type="checkbox"
+                        id={`featured-${id}`}
+                        checked={isFeatured}
+                        onChange={(e) => setIsFeatured(e.target.checked)}
+                        className="w-5 h-5 rounded border-ink/20 text-signal focus:ring-signal"
+                    />
+                    <label htmlFor={`featured-${id}`} className="font-body text-sm text-ink cursor-pointer select-none">
+                        Star as Marketplace Hero featured artwork
+                    </label>
+                </div>
+
                 <div className="mt-auto flex gap-3">
                     <button
                         onClick={() => onAction(id, 'rejected')}
@@ -148,7 +163,7 @@ export function PendingArtworkCard({
                         Keep Private
                     </button>
                     <button
-                        onClick={() => onAction(id, 'approved', { title: title || 'Untitled', creation_story: editedStory, price_sgd: price })}
+                        onClick={() => onAction(id, 'approved', { title: title || 'Untitled', creation_story: editedStory, price_sgd: price, is_featured: isFeatured })}
                         disabled={isUpdating}
                         className="flex-1 min-h-[56px] bg-ink text-surface font-bold rounded-creator hover:opacity-90 disabled:opacity-50"
                     >

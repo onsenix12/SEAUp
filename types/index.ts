@@ -54,6 +54,7 @@ export interface Artwork {
     ip_owner: string; // strictly 'creator'
     learning_tags?: string;
     journey?: string;
+    is_featured?: boolean;
     price_sgd?: number;
     creators?: {
         name: string | null;

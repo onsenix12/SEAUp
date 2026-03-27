@@ -41,6 +41,7 @@ CREATE TABLE artworks (
     is_public BOOLEAN NOT NULL DEFAULT false,
     marketplace_status TEXT,
     ip_owner TEXT NOT NULL DEFAULT 'creator', -- Product strict requirement
+    is_featured BOOLEAN NOT NULL DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
