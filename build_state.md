@@ -128,3 +128,5 @@
 
 [Session 10 — 2026-03-27]
 - [x] **UI Polish**: Fixed CTA buttons ("Done drawing" / "Skip for now") on the Canvas step (`step-5-canvas`). They are now properly constrained to `max-w-md` width while keeping the action bar background and top border spanning the full width of the screen.
+- [x] **Cleanup**: Removed the "Skills practiced today" section from the Print Result page (`step-9-print`).
+- [x] **Cleanup**: Removed the generated creation story display from the Shop Success page (`step-9-shop-success`).
