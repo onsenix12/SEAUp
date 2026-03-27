@@ -6,7 +6,7 @@
 ---
 
 ## Last Updated
-- Date: 2026-03-16
+- Date: 2026-03-27
 - Session duration: N/A
 - Updated by: Agent
 
@@ -125,3 +125,6 @@
   - `CreationFlowContext.resetState()`: now also clears `sessionStorage` keys `generated_creation_story` and `generated_artwork_url` — previously scattered across component handlers.
   - Removed `as any` casts: `PendingArtwork` exported from `FacilitatorDashboardClient` and imported in admin page; `Artwork` imported in marketplace page.
 - [x] **Documentation consolidation**: `problem.md`, `solution.md`, `kickoff_prompt.md` absorbed into `README.md` and deleted. `decisions.md` updated with DEC-007 through DEC-012 (Lyria 2, Journey union, dynamic options, sessionStorage pattern, learning tags schema, facilitator prompts in content).
+
+[Session 10 — 2026-03-27]
+- [x] **UI Polish**: Fixed CTA buttons ("Done drawing" / "Skip for now") on the Canvas step (`step-5-canvas`). They are now properly constrained to `max-w-md` width while keeping the action bar background and top border spanning the full width of the screen.
