@@ -111,8 +111,6 @@ export default function Step9Print() {
                 </p>
             </div>
 
-    const [artworkUrl, setArtworkUrl] = useState<string | null>(null);
-
             {/* Actions */}
             <div className="flex flex-col gap-4 w-full mt-auto">
                 <Link href="/gallery" className="w-full">
