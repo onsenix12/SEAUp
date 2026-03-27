@@ -11,12 +11,13 @@ interface PendingArtworkCardProps {
     colourPalette: string;
     subject: string;
     journey?: string;
+    title?: string;
     learningTags?: string;
     creationStory?: string;
     priceSgd?: number;
     facilitatorId?: string;
     isUpdating: boolean;
-    onAction: (id: string, action: 'approved' | 'rejected', metadata?: { creation_story: string; price_sgd: number }) => void;
+    onAction: (id: string, action: 'approved' | 'rejected', metadata?: { title: string; creation_story: string; price_sgd: number }) => void;
 }
 
 export function PendingArtworkCard({
@@ -28,6 +29,7 @@ export function PendingArtworkCard({
     colourPalette,
     subject,
     journey,
+    title: initialTitle,
     learningTags,
     creationStory,
     priceSgd,
@@ -36,6 +38,7 @@ export function PendingArtworkCard({
     onAction
 }: PendingArtworkCardProps) {
     const skills = storageStringToSkills(learningTags ?? '').slice(0, 3);
+    const [title, setTitle] = useState(initialTitle ?? '');
     const [editedStory, setEditedStory] = useState(creationStory ?? '');
     const [price, setPrice] = useState(priceSgd ?? 0);
     return (
@@ -92,6 +95,20 @@ export function PendingArtworkCard({
                     </div>
                 )}
 
+                {/* Title editor */}
+                <div className="mb-4">
+                    <label className="font-mono text-xs text-muted tracking-widest uppercase mb-1 block">
+                        Title
+                    </label>
+                    <input
+                        type="text"
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
+                        placeholder="Untitled"
+                        className="w-full px-3 py-2 bg-canvas border border-border rounded-xl font-creator text-sm font-bold text-ink focus:outline-none focus:border-ink transition-colors"
+                    />
+                </div>
+
                 {/* Creation story editor */}
                 <div className="mb-4">
                     <label className="font-mono text-xs text-muted tracking-widest uppercase mb-1 block">
@@ -131,7 +148,7 @@ export function PendingArtworkCard({
                         Keep Private
                     </button>
                     <button
-                        onClick={() => onAction(id, 'approved', { creation_story: editedStory, price_sgd: price })}
+                        onClick={() => onAction(id, 'approved', { title: title || 'Untitled', creation_story: editedStory, price_sgd: price })}
                         disabled={isUpdating}
                         className="flex-1 min-h-[56px] bg-ink text-surface font-bold rounded-creator hover:opacity-90 disabled:opacity-50"
                     >
