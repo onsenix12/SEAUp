@@ -98,19 +98,21 @@ export default function Step5Canvas() {
             </div>
 
             {/* Action Buttons — sticky so they're always reachable */}
-            <div className="fixed bottom-0 left-0 right-0 flex flex-col gap-3 p-4 bg-canvas border-t border-border z-10">
-                <button
-                    onClick={handleNext}
-                    className="w-full min-h-[64px] bg-signal text-ink font-creator font-bold text-xl rounded-creator shadow-sm active:scale-[0.98] transition-transform"
-                >
-                    {language === 'en' ? 'Done drawing' : 'Selesai menggambar'}
-                </button>
-                <button
-                    onClick={handleSkip}
-                    className="w-full min-h-[64px] bg-surface text-ink font-creator font-bold text-xl rounded-creator border-2 border-border shadow-sm active:scale-[0.98] transition-transform"
-                >
-                    {language === 'en' ? 'Skip for now' : 'Lewati dulu'}
-                </button>
+            <div className="fixed bottom-0 left-0 right-0 flex justify-center bg-canvas border-t border-border z-10 w-full pb-[env(safe-area-inset-bottom)]">
+                <div className="flex flex-col gap-3 w-full max-w-md p-4">
+                    <button
+                        onClick={handleNext}
+                        className="w-full min-h-[64px] bg-signal text-ink font-creator font-bold text-xl rounded-creator shadow-sm active:scale-[0.98] transition-transform"
+                    >
+                        {language === 'en' ? 'Done drawing' : 'Selesai menggambar'}
+                    </button>
+                    <button
+                        onClick={handleSkip}
+                        className="w-full min-h-[64px] bg-surface text-ink font-creator font-bold text-xl rounded-creator border-2 border-border shadow-sm active:scale-[0.98] transition-transform"
+                    >
+                        {language === 'en' ? 'Skip for now' : 'Lewati dulu'}
+                    </button>
+                </div>
             </div>
         </StepLayout>
         </>
