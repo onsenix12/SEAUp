@@ -4,8 +4,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useCreationFlow } from "@/contexts/CreationFlowContext";
 import { useFacilitator } from "@/contexts/FacilitatorContext";
 import { COPY } from "@/lib/i18n/copy";
-import { deriveImageSkills } from "@/lib/learning/skills";
-import SkillsCard from "@/components/learning/SkillsCard";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -16,7 +14,6 @@ export default function Step9Print() {
     const { language } = useLanguage();
     const { state } = useCreationFlow();
     const { sessionData } = useFacilitator();
-    const skills = deriveImageSkills(state);
     const router = useRouter();
     const t = COPY[language];
 
@@ -114,11 +111,7 @@ export default function Step9Print() {
                 </p>
             </div>
 
-            <SkillsCard
-                skills={skills}
-                language={language}
-                creatorName={sessionData.isActive ? sessionData.creatorName : undefined}
-            />
+    const [artworkUrl, setArtworkUrl] = useState<string | null>(null);
 
             {/* Actions */}
             <div className="flex flex-col gap-4 w-full mt-auto">
