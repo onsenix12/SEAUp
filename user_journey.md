@@ -422,11 +422,11 @@ Applies equally to artwork sales and music licensing.
 
 | Feature | Status |
 |---|---|
-| Journey entry point (Feelings / World / Sounds) | 🔧 Needs building — currently "Make a Picture / Make Music" |
+| Journey entry point (Feelings / World / Sounds) | ✅ Live |
 | Step-by-step creation flow (mood, colour, subject) | ✅ Live |
 | Canvas Mode | ✅ Live |
-| Contextually generated options (Gemini at each step) | 🔧 Needs building — currently fixed options |
-| Facilitator prompt cards between steps (Option A) | 🔧 Needs building |
+| Contextually generated options (Gemini at each step) | ✅ Live |
+| Facilitator prompt cards between steps (Option A) | ✅ Live |
 | Skills Practiced card at end | ✅ Live |
 | Music creation flow | ✅ Live |
 | Print for myself (POD) | 📅 Phase 2 |

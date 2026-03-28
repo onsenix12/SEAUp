@@ -260,4 +260,139 @@
 
 ---
 
+### [DEC-013] Facilitator-authored Titles and "Featured" status for Marketplace
+- Date: 2026-03-27
+- Made by: Agent
+- Status: Decided
+
+**Context:** The marketplace needed a way to highlight exceptional artworks in the hero section, and many ID creators express concepts that require a descriptive title to convey the full meaning to buyers.
+
+**Options considered:**
+- A) Relying on AI to generate titles based on image analysis
+- B) Allowing facilitators to manually input titles and toggle an `is_featured` boolean during the approval flow
+
+**Decision:** Option B.
+
+**Rationale:** Human curation is essential here. Facilitators are best positioned to capture the creator's original intent in a title. The `is_featured` flag allows strict editorial control over the marketplace hero section, ensuring brand quality.
+
+**Implications:** `artworks` schema requires `title` (TEXT) and `is_featured` (BOOLEAN DEFAULT false). The `PendingArtworkCard` must support text input before the approval mutation fires.
+
+---
+
+### [DEC-014] Unified Gallery grouped by Journey, not Media Type
+- Date: 2026-03-27
+- Made by: Agent
+- Status: Decided
+
+**Context:** The gallery previously separated visual artworks from music tracks. As the platform grew, this felt disjointed and lost the context of the creator's emotional or thematic journey.
+
+**Options considered:**
+- A) Maintain strict separation (Art tab vs Music tab)
+- B) Chronological feed of all mixed media
+- C) Group all media under their originating Journey (Feelings, World, Sounds)
+
+**Decision:** Option C.
+
+**Rationale:** The core pedagogical value of the platform is the *Journey*, not just the final output. Grouping by journey reinforces the curriculum (e.g., seeing all "My Feelings" outputs together) and creates a more cohesive exhibition of the creator's state of mind.
+
+**Implications:** The Gallery fetching logic must query both `artworks` and `music_tracks`, merge them, and group them by the `journey` enum before rendering the sections.
+
+---
+
+### [DEC-015] Zero-price artworks map to "Price on Request", not "Free"
+- Date: 2026-03-16
+- Made by: Agent (Session 9 QA)
+- Status: Decided
+
+**Context:** During marketplace QA, artworks without an explicitly set price were displaying as "$0 SGD".
+
+**Options considered:**
+- A) Display "$0 SGD"
+- B) Display "Free"
+- C) Display "Price on request"
+
+**Decision:** Option C.
+
+**Rationale:** In a premium art marketplace, "$0" or "Free" undervalues the creator's work. Standard gallery practice for unpriced items is "Price on request".
+
+**Implications:** The `MarketplaceArtworkCard` UI handles this via `(price ?? 0) > 0 ? format(price) : 'Price on request'`.
+
+---
+
+### [DEC-016] 'feelings' as the default fallback for missing journey data
+- Date: 2026-03-16
+- Made by: Agent (Session 9 QA)
+- Status: Decided
+
+**Context:** Older artwork records from before the Journey union type (DEC-008) was strictly enforced had empty strings `''` for their journey.
+
+**Options considered:**
+- A) Leave as empty string and handle nulls in the UI
+- B) Fall back to `'feelings'` upon save/load
+
+**Decision:** Option B.
+
+**Rationale:** The UI (especially the Gallery refactor) expects every piece of media to belong to a valid Journey. Allowing empty strings breaks the layout components that rely on the `Journey` union. `'feelings'` is the original and most common journey.
+
+**Implications:** `app/api/save/route.ts` defaults to `'feelings'` if the client sends an invalid or missing journey string.
+
+---
+
+### [DEC-017] Microphone recording used as MVP proxy for "Rhythm" skill
+- Date: 2026-03-15
+- Made by: Agent (Session 8)
+- Status: Decided
+
+**Context:** The Learning Path spec requires mapping creator actions to a "Rhythm" skill. However, the complex tapping/rhythm interaction planned for the bespoke Music Canvas was pushed to Phase 2.
+
+**Options considered:**
+- A) Drop the Rhythm skill from MVP entirely
+- B) Map Rhythm to the act of recording custom audio (`hasRecordedAudio`)
+
+**Decision:** Option B.
+
+**Rationale:** Recording a vocalization or sound effect requires temporal timing and auditory engagement, which satisfies the pedagogical goal of "auditory interaction" for the MVP, without requiring the complex Phase 2 rhythm UI.
+
+**Implications:** `deriveMusicSkills()` in `lib/learning/skills.ts` uses the `hasRecordedAudio` boolean to grant the Rhythm tag.
+
+---
+
+### [DEC-018] CSS-only Animations for the audio generating state
+- Date: 2026-03-11
+- Made by: Agent (Session 6)
+- Status: Decided
+
+**Context:** The music generation screen uses an animated waveform. When this was implemented with randomized inline styles or JS-driven delays, Next.js threw hydration mismatch errors because the server-rendered values differed from the client's initial computed values on the frontend.
+
+**Options considered:**
+- A) Render the animation client-side only (via `next/dynamic`)
+- B) Use pure CSS animations defined in `globals.css`
+
+**Decision:** Option B.
+
+**Rationale:** Moving the `@keyframes` and `animation-delay` configurations to a dedicated CSS class eliminates the hydration mismatch entirely while keeping the component server-renderable and lightweight.
+
+**Implications:** Highly-randomized animations must use stable CSS selectors rather than inline React state outputs to prevent Next.js hydration failures.
+
+---
+
+### [DEC-019] Removal of Video Generation from MVP UI
+- Date: 2026-03-14
+- Made by: Agent (Session 7)
+- Status: Decided
+
+**Context:** The Homepage originally had a "Make a Video" CTA alongside "Make a Picture" and "Make Music". Video generation using Google Veo is slated for Phase 2.
+
+**Options considered:**
+- A) Keep the button but link to a "Coming Soon" page (as originally defined in requirements.md)
+- B) Hide the button entirely for MVP
+
+**Decision:** Option B.
+
+**Rationale:** "Coming soon" buttons in a mobile-first flow designed for individuals with intellectual disabilities create "dead ends" that cause confusion and frustration. It is better to only show actionable paths.
+
+**Implications:** The UI currently only supports two bifurcated paths (Art / Music).
+
+---
+
 *[AGENT: Add new decisions below this line as they arise during development]*
