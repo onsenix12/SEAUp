@@ -133,3 +133,7 @@
 - [x] **Feature**: Added a "Title" input field to the Admin/Facilitator `PendingArtworkCard` so facilitators can name artworks before approving them to the marketplace. The title is saved to the database upon approval.
 - [x] **Feature**: Implemented explicit Featured Artwork logic. Added `is_featured` boolean to the `artworks` database schema. Added a star toggle in the Admin Dashboard to feature artworks. Sourced the marketplace Hero to display `is_featured` items first.
 - [x] **UI Polish**: Refactored the Gallery page layout to group artworks and music tracks logically by the creator's *Journey* choice (My Feelings, My World, My Sounds) rather than just separating visuals and music. Added "By Creator" overlays to Music cards for clarity.
+
+[Session 11 — 2026-05-16]
+- [x] **Bug Fix**: Fixed `ReactKonva` warning in `CanvasEditor.tsx` by adding an `onDragEnd` handler to update sticker coordinates in the component's state.
+- [x] **Bug Fix**: Fixed `413 (Content Too Large)` error on the `/api/save` endpoint by stripping large `photo_base64` and `canvas_base64` strings from the payload before submitting in `step-8-result/page.tsx`, avoiding Vercel payload limits.

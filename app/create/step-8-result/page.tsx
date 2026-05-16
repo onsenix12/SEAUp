@@ -85,8 +85,16 @@ export default function Step8Decision() {
                 return;
             }
 
+            const stateForSave = { ...state };
+            if (stateForSave.photo_base64) {
+                stateForSave.photo_base64 = "true";
+            }
+            if (stateForSave.canvas_base64) {
+                stateForSave.canvas_base64 = "true";
+            }
+
             const savePayload = {
-                state,
+                state: stateForSave,
                 artworkUrl,
                 creationStory: sessionStorage.getItem("generated_creation_story") || "Created through visual choices.",
                 marketplaceStatus: decision,

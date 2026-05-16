@@ -102,6 +102,19 @@ export default function CanvasEditor({ backgroundImageBase64, shouldExport, onEx
         ]);
     };
 
+    const handleStickerDragEnd = (id: string, e: any) => {
+        setStickers(stickers.map(s => {
+            if (s.id === id) {
+                return {
+                    ...s,
+                    x: e.target.x(),
+                    y: e.target.y()
+                };
+            }
+            return s;
+        }));
+    };
+
     const handleClear = () => {
         setLines([]);
         setStickers([]);
@@ -229,6 +242,7 @@ export default function CanvasEditor({ backgroundImageBase64, shouldExport, onEx
                                 y={sticker.y}
                                 fontSize={40}
                                 draggable
+                                onDragEnd={(e) => handleStickerDragEnd(sticker.id, e)}
                                 name="sticker"
                             />
                         ))}
